@@ -1,13 +1,24 @@
 <script lang="ts">
-    let { showAddForm = $bindable() }: { showAddForm: boolean } = $props();
+    let {
+        showAddForm = $bindable(),
+        onSubmit,
+    } = $props();
 
     let dialog = $state<HTMLDialogElement>();
+    let name = $state<string>('');
 
     $effect(() => {
         if (showAddForm && dialog) {
             dialog.showModal();
+        } else {
+            dialog?.close()
         }
     });
+
+    function handleSubmit() {
+        onSubmit?.({ name });
+        name = '';
+    }
 </script>
 
 <dialog
@@ -15,9 +26,9 @@
     onclose={() => (showAddForm = false)}
     onclick={(e) => { if (e.target === dialog) dialog.close(); }}
 >
-    <form>
+    <form onsubmit={handleSubmit}>
         <label for="name">Name</label>
-        <input name="name" type=text/>
+        <input name="name" type=text bind:value={name}/>
 
         <input type="submit" value="Add"/>
 

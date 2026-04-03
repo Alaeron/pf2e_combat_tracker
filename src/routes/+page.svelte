@@ -15,6 +15,9 @@
         order: number,
         conditions: ConditionType[]
     }
+    interface AddFormData {
+        name: string
+    }
 
     let defaultCreatures: CreatureType[] = [
         {
@@ -306,6 +309,21 @@
             round += 1;
         }
     }
+    function handleAddFormSubmit(data: AddFormData) {
+        showAddForm = false;
+
+        if ( creatures.some(creature => creature.name === data.name) ) {
+            alert(`Creature with name "${data.name}" already exists!`)
+            return;
+        }
+
+        creatures.push({
+            id: Math.max(...creatures.map(creature => creature.id)) + 1,
+            name: data.name,
+            order:  Math.max(...creatures.map(creature => creature.order)) + 1,
+            conditions: []
+        })
+    }
 </script>
 
 <header>
@@ -342,7 +360,7 @@
     {/each}
 </div>
 
-<AddForm bind:showAddForm />
+<AddForm bind:showAddForm onSubmit={handleAddFormSubmit}/>
 
 <style>
     :global(html, body) {
