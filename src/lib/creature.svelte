@@ -1,47 +1,12 @@
 <script lang="ts">
 	import Condition from '$lib/condition.svelte';
 
-    let { name, order } = $props();
-
-    let conditions = [
-        "Blinded",
-        "Clumsy",
-        "Concealed",
-        "Confused",
-        "Controlled",
-        "Dazzled",
-        "Deafened",
-        "Doomed",
-        "Drained",
-        "Dying",
-        "Encumbered",
-        "Enfeebled",
-        "Fascinated",
-        "Fatigued",
-        "Fleeing",
-        "Frightened",
-        "Grabbed",
-        "Hidden",
-        "Immobilized",
-        "Invisible",
-        "Observed",
-        "Off-Guard",
-        "Paralyzed",
-        "Persistent Damage",
-        "Petrified",
-        "Prone",
-        "Quickened",
-        "Restrained",
-        "Sickened",
-        "Slowed",
-        "Stunned",
-        "Stupefied",
-        "Taunted",
-        "Unconscious",
-        "Undetected",
-        "Unnoticed",
-        "Wounded"
-    ]
+    interface Props {
+        name: string,
+        order: number,
+        conditions: string[]
+    }
+    let { name, order, conditions }: Props = $props();
 </script>
 
 <div class="creature">
@@ -72,6 +37,7 @@
     }
     .name {
         text-wrap: nowrap;
+        flex-basis: 15rem;
     }
     .conditions {
         display: flex;
