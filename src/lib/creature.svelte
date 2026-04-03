@@ -1,10 +1,15 @@
 <script lang="ts">
 	import Condition from '$lib/condition.svelte';
 
+    interface ConditionType {
+        name: string,
+        value: number | null
+    }
+
     interface Props {
         name: string,
         order: number,
-        conditions: string[]
+        conditions: ConditionType[]
     }
     let { name, order, conditions }: Props = $props();
 </script>
@@ -14,7 +19,7 @@
     <span class="name">{name}</span>
     <div class="conditions">
         {#each conditions as condition, index (index)}
-        <Condition name={condition} value={1}/>
+        <Condition name={condition.name} value={condition.value}/>
         {/each}
     </div>
 </div>

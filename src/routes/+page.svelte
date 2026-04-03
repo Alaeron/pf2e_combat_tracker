@@ -2,12 +2,18 @@
     import {flip} from "svelte/animate";
     import {dndzone} from "svelte-dnd-action";
 	import Creature from '$lib/creature.svelte';
+    import AddForm from "$lib/add_form.svelte";
+
+    interface ConditionType {
+        name: string,
+        value: number | null
+    }
 
     interface CreatureType {
         id: number,
         name: string,
         order: number,
-        conditions: string[]
+        conditions: ConditionType[]
     }
 
     let defaultCreatures: CreatureType[] = [
@@ -16,43 +22,43 @@
             name:"Blood",
             order: 1,
             conditions: [
-                "Blinded",
-                "Clumsy",
-                "Concealed",
-                "Confused",
-                "Controlled",
-                "Dazzled",
-                "Deafened",
-                "Doomed",
-                "Drained",
-                "Dying",
-                "Encumbered",
-                "Enfeebled",
-                "Fascinated",
-                "Fatigued",
-                "Fleeing",
-                "Frightened",
-                "Grabbed",
-                "Hidden",
-                "Immobilized",
-                "Invisible",
-                "Observed",
-                "Off-Guard",
-                "Paralyzed",
-                "Persistent Damage",
-                "Petrified",
-                "Prone",
-                "Quickened",
-                "Restrained",
-                "Sickened",
-                "Slowed",
-                "Stunned",
-                "Stupefied",
-                "Taunted",
-                "Unconscious",
-                "Undetected",
-                "Unnoticed",
-                "Wounded"
+                { name: "Blinded", value: null },
+                { name: "Clumsy", value: 1 },
+                { name: "Concealed", value: null },
+                { name: "Confused", value: null },
+                { name: "Controlled", value: null },
+                { name: "Dazzled", value: null },
+                { name: "Deafened", value: null },
+                { name: "Doomed", value: 1 },
+                { name: "Drained", value: 1 },
+                { name: "Dying", value: 1 },
+                { name: "Encumbered", value: null },
+                { name: "Enfeebled", value: 1 },
+                { name: "Fascinated", value: null },
+                { name: "Fatigued", value: null },
+                { name: "Fleeing", value: null },
+                { name: "Frightened", value: 1 },
+                { name: "Grabbed", value: null },
+                { name: "Hidden", value: null },
+                { name: "Immobilized", value: null },
+                { name: "Invisible", value: null },
+                { name: "Observed", value: null },
+                { name: "Off-Guard", value: null },
+                { name: "Paralyzed", value: null },
+                { name: "Persistent Damage", value: 1 },
+                { name: "Petrified", value: null },
+                { name: "Prone", value: null },
+                { name: "Quickened", value: null },
+                { name: "Restrained", value: null },
+                { name: "Sickened", value: 1 },
+                { name: "Slowed", value: 1 },
+                { name: "Stunned", value: 1 },
+                { name: "Stupefied", value: 1 },
+                { name: "Taunted", value: null },
+                { name: "Unconscious", value: null },
+                { name: "Undetected", value: null },
+                { name: "Unnoticed", value: null },
+                { name: "Wounded", value: 1 }
             ]
         },
         {
@@ -60,43 +66,43 @@
             name:"Agronakis",
             order: 2,
             conditions: [
-                "Blinded",
-                "Clumsy",
-                "Concealed",
-                "Confused",
-                "Controlled",
-                "Dazzled",
-                "Deafened",
-                "Doomed",
-                "Drained",
-                "Dying",
-                "Encumbered",
-                "Enfeebled",
-                "Fascinated",
-                "Fatigued",
-                "Fleeing",
-                "Frightened",
-                "Grabbed",
-                "Hidden",
-                "Immobilized",
-                "Invisible",
-                "Observed",
-                "Off-Guard",
-                "Paralyzed",
-                "Persistent Damage",
-                "Petrified",
-                "Prone",
-                "Quickened",
-                "Restrained",
-                "Sickened",
-                "Slowed",
-                "Stunned",
-                "Stupefied",
-                "Taunted",
-                "Unconscious",
-                "Undetected",
-                "Unnoticed",
-                "Wounded"
+                { name: "Blinded", value: null },
+                { name: "Clumsy", value: 1 },
+                { name: "Concealed", value: null },
+                { name: "Confused", value: null },
+                { name: "Controlled", value: null },
+                { name: "Dazzled", value: null },
+                { name: "Deafened", value: null },
+                { name: "Doomed", value: 1 },
+                { name: "Drained", value: 1 },
+                { name: "Dying", value: 1 },
+                { name: "Encumbered", value: null },
+                { name: "Enfeebled", value: 1 },
+                { name: "Fascinated", value: null },
+                { name: "Fatigued", value: null },
+                { name: "Fleeing", value: null },
+                { name: "Frightened", value: 1 },
+                { name: "Grabbed", value: null },
+                { name: "Hidden", value: null },
+                { name: "Immobilized", value: null },
+                { name: "Invisible", value: null },
+                { name: "Observed", value: null },
+                { name: "Off-Guard", value: null },
+                { name: "Paralyzed", value: null },
+                { name: "Persistent Damage", value: 1 },
+                { name: "Petrified", value: null },
+                { name: "Prone", value: null },
+                { name: "Quickened", value: null },
+                { name: "Restrained", value: null },
+                { name: "Sickened", value: 1 },
+                { name: "Slowed", value: 1 },
+                { name: "Stunned", value: 1 },
+                { name: "Stupefied", value: 1 },
+                { name: "Taunted", value: null },
+                { name: "Unconscious", value: null },
+                { name: "Undetected", value: null },
+                { name: "Unnoticed", value: null },
+                { name: "Wounded", value: 1 }
             ]
         },
         {
@@ -104,43 +110,43 @@
             name:"Gadzius",
             order: 3,
             conditions: [
-                "Blinded",
-                "Clumsy",
-                "Concealed",
-                "Confused",
-                "Controlled",
-                "Dazzled",
-                "Deafened",
-                "Doomed",
-                "Drained",
-                "Dying",
-                "Encumbered",
-                "Enfeebled",
-                "Fascinated",
-                "Fatigued",
-                "Fleeing",
-                "Frightened",
-                "Grabbed",
-                "Hidden",
-                "Immobilized",
-                "Invisible",
-                "Observed",
-                "Off-Guard",
-                "Paralyzed",
-                "Persistent Damage",
-                "Petrified",
-                "Prone",
-                "Quickened",
-                "Restrained",
-                "Sickened",
-                "Slowed",
-                "Stunned",
-                "Stupefied",
-                "Taunted",
-                "Unconscious",
-                "Undetected",
-                "Unnoticed",
-                "Wounded"
+                { name: "Blinded", value: null },
+                { name: "Clumsy", value: 1 },
+                { name: "Concealed", value: null },
+                { name: "Confused", value: null },
+                { name: "Controlled", value: null },
+                { name: "Dazzled", value: null },
+                { name: "Deafened", value: null },
+                { name: "Doomed", value: 1 },
+                { name: "Drained", value: 1 },
+                { name: "Dying", value: 1 },
+                { name: "Encumbered", value: null },
+                { name: "Enfeebled", value: 1 },
+                { name: "Fascinated", value: null },
+                { name: "Fatigued", value: null },
+                { name: "Fleeing", value: null },
+                { name: "Frightened", value: 1 },
+                { name: "Grabbed", value: null },
+                { name: "Hidden", value: null },
+                { name: "Immobilized", value: null },
+                { name: "Invisible", value: null },
+                { name: "Observed", value: null },
+                { name: "Off-Guard", value: null },
+                { name: "Paralyzed", value: null },
+                { name: "Persistent Damage", value: 1 },
+                { name: "Petrified", value: null },
+                { name: "Prone", value: null },
+                { name: "Quickened", value: null },
+                { name: "Restrained", value: null },
+                { name: "Sickened", value: 1 },
+                { name: "Slowed", value: 1 },
+                { name: "Stunned", value: 1 },
+                { name: "Stupefied", value: 1 },
+                { name: "Taunted", value: null },
+                { name: "Unconscious", value: null },
+                { name: "Undetected", value: null },
+                { name: "Unnoticed", value: null },
+                { name: "Wounded", value: 1 }
             ]
         },
         {
@@ -148,43 +154,43 @@
             name:"Goblin 1",
             order: 4,
             conditions: [
-                "Blinded",
-                "Clumsy",
-                "Concealed",
-                "Confused",
-                "Controlled",
-                "Dazzled",
-                "Deafened",
-                "Doomed",
-                "Drained",
-                "Dying",
-                "Encumbered",
-                "Enfeebled",
-                "Fascinated",
-                "Fatigued",
-                "Fleeing",
-                "Frightened",
-                "Grabbed",
-                "Hidden",
-                "Immobilized",
-                "Invisible",
-                "Observed",
-                "Off-Guard",
-                "Paralyzed",
-                "Persistent Damage",
-                "Petrified",
-                "Prone",
-                "Quickened",
-                "Restrained",
-                "Sickened",
-                "Slowed",
-                "Stunned",
-                "Stupefied",
-                "Taunted",
-                "Unconscious",
-                "Undetected",
-                "Unnoticed",
-                "Wounded"
+                { name: "Blinded", value: null },
+                { name: "Clumsy", value: 1 },
+                { name: "Concealed", value: null },
+                { name: "Confused", value: null },
+                { name: "Controlled", value: null },
+                { name: "Dazzled", value: null },
+                { name: "Deafened", value: null },
+                { name: "Doomed", value: 1 },
+                { name: "Drained", value: 1 },
+                { name: "Dying", value: 1 },
+                { name: "Encumbered", value: null },
+                { name: "Enfeebled", value: 1 },
+                { name: "Fascinated", value: null },
+                { name: "Fatigued", value: null },
+                { name: "Fleeing", value: null },
+                { name: "Frightened", value: 1 },
+                { name: "Grabbed", value: null },
+                { name: "Hidden", value: null },
+                { name: "Immobilized", value: null },
+                { name: "Invisible", value: null },
+                { name: "Observed", value: null },
+                { name: "Off-Guard", value: null },
+                { name: "Paralyzed", value: null },
+                { name: "Persistent Damage", value: 1 },
+                { name: "Petrified", value: null },
+                { name: "Prone", value: null },
+                { name: "Quickened", value: null },
+                { name: "Restrained", value: null },
+                { name: "Sickened", value: 1 },
+                { name: "Slowed", value: 1 },
+                { name: "Stunned", value: 1 },
+                { name: "Stupefied", value: 1 },
+                { name: "Taunted", value: null },
+                { name: "Unconscious", value: null },
+                { name: "Undetected", value: null },
+                { name: "Unnoticed", value: null },
+                { name: "Wounded", value: 1 }
             ]
         },
         {
@@ -192,43 +198,43 @@
             name:"Goblin 2",
             order: 5,
             conditions: [
-                "Blinded",
-                "Clumsy",
-                "Concealed",
-                "Confused",
-                "Controlled",
-                "Dazzled",
-                "Deafened",
-                "Doomed",
-                "Drained",
-                "Dying",
-                "Encumbered",
-                "Enfeebled",
-                "Fascinated",
-                "Fatigued",
-                "Fleeing",
-                "Frightened",
-                "Grabbed",
-                "Hidden",
-                "Immobilized",
-                "Invisible",
-                "Observed",
-                "Off-Guard",
-                "Paralyzed",
-                "Persistent Damage",
-                "Petrified",
-                "Prone",
-                "Quickened",
-                "Restrained",
-                "Sickened",
-                "Slowed",
-                "Stunned",
-                "Stupefied",
-                "Taunted",
-                "Unconscious",
-                "Undetected",
-                "Unnoticed",
-                "Wounded"
+                { name: "Blinded", value: null },
+                { name: "Clumsy", value: 1 },
+                { name: "Concealed", value: null },
+                { name: "Confused", value: null },
+                { name: "Controlled", value: null },
+                { name: "Dazzled", value: null },
+                { name: "Deafened", value: null },
+                { name: "Doomed", value: 1 },
+                { name: "Drained", value: 1 },
+                { name: "Dying", value: 1 },
+                { name: "Encumbered", value: null },
+                { name: "Enfeebled", value: 1 },
+                { name: "Fascinated", value: null },
+                { name: "Fatigued", value: null },
+                { name: "Fleeing", value: null },
+                { name: "Frightened", value: 1 },
+                { name: "Grabbed", value: null },
+                { name: "Hidden", value: null },
+                { name: "Immobilized", value: null },
+                { name: "Invisible", value: null },
+                { name: "Observed", value: null },
+                { name: "Off-Guard", value: null },
+                { name: "Paralyzed", value: null },
+                { name: "Persistent Damage", value: 1 },
+                { name: "Petrified", value: null },
+                { name: "Prone", value: null },
+                { name: "Quickened", value: null },
+                { name: "Restrained", value: null },
+                { name: "Sickened", value: 1 },
+                { name: "Slowed", value: 1 },
+                { name: "Stunned", value: 1 },
+                { name: "Stupefied", value: 1 },
+                { name: "Taunted", value: null },
+                { name: "Unconscious", value: null },
+                { name: "Undetected", value: null },
+                { name: "Unnoticed", value: null },
+                { name: "Wounded", value: 1 }
             ]
         },
         {
@@ -236,48 +242,49 @@
             name:"Bugbear 1",
             order: 6,
             conditions: [
-                "Blinded",
-                "Clumsy",
-                "Concealed",
-                "Confused",
-                "Controlled",
-                "Dazzled",
-                "Deafened",
-                "Doomed",
-                "Drained",
-                "Dying",
-                "Encumbered",
-                "Enfeebled",
-                "Fascinated",
-                "Fatigued",
-                "Fleeing",
-                "Frightened",
-                "Grabbed",
-                "Hidden",
-                "Immobilized",
-                "Invisible",
-                "Observed",
-                "Off-Guard",
-                "Paralyzed",
-                "Persistent Damage",
-                "Petrified",
-                "Prone",
-                "Quickened",
-                "Restrained",
-                "Sickened",
-                "Slowed",
-                "Stunned",
-                "Stupefied",
-                "Taunted",
-                "Unconscious",
-                "Undetected",
-                "Unnoticed",
-                "Wounded"
+                { name: "Blinded", value: null },
+                { name: "Clumsy", value: 1 },
+                { name: "Concealed", value: null },
+                { name: "Confused", value: null },
+                { name: "Controlled", value: null },
+                { name: "Dazzled", value: null },
+                { name: "Deafened", value: null },
+                { name: "Doomed", value: 1 },
+                { name: "Drained", value: 1 },
+                { name: "Dying", value: 1 },
+                { name: "Encumbered", value: null },
+                { name: "Enfeebled", value: 1 },
+                { name: "Fascinated", value: null },
+                { name: "Fatigued", value: null },
+                { name: "Fleeing", value: null },
+                { name: "Frightened", value: 1 },
+                { name: "Grabbed", value: null },
+                { name: "Hidden", value: null },
+                { name: "Immobilized", value: null },
+                { name: "Invisible", value: null },
+                { name: "Observed", value: null },
+                { name: "Off-Guard", value: null },
+                { name: "Paralyzed", value: null },
+                { name: "Persistent Damage", value: 1 },
+                { name: "Petrified", value: null },
+                { name: "Prone", value: null },
+                { name: "Quickened", value: null },
+                { name: "Restrained", value: null },
+                { name: "Sickened", value: 1 },
+                { name: "Slowed", value: 1 },
+                { name: "Stunned", value: 1 },
+                { name: "Stupefied", value: 1 },
+                { name: "Taunted", value: null },
+                { name: "Unconscious", value: null },
+                { name: "Undetected", value: null },
+                { name: "Unnoticed", value: null },
+                { name: "Wounded", value: 1 }
             ]
         }
     ]
     let creatures = $state<CreatureType[]>(defaultCreatures);
     let round = $state<number>(1);
+    let showAddForm = $state<boolean>(false);
 
     function handleDndConsider(e: CustomEvent) {
         creatures = e.detail.items;
@@ -291,7 +298,8 @@
         console.log($state.snapshot(creatures));
     }
     function handleClickNext() {
-        creatures.push(creatures.splice(0, 1)[0]);
+        let creature = creatures.splice(0, 1)[0];
+        creatures.push(creature);
 
         // If we're back to order 1, increase the round
         if (creatures.length > 0 && creatures[0].order === 1) {
@@ -302,6 +310,10 @@
 
 <header>
     <h1>Combat Tracker</h1>
+    <div class="header-right">
+        <button onclick={() => (showAddForm = true)}>Add</button>
+        <button onclick={() => (creatures = [])}>Clear</button>
+    </div>
 </header>
 
 <div class="toolbar">
@@ -330,6 +342,8 @@
     {/each}
 </div>
 
+<AddForm bind:showAddForm />
+
 <style>
     :global(html, body) {
         margin: 0px;
@@ -339,12 +353,36 @@
     }
     header {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        padding: 1rem 0rem 0rem 0rem;
+        padding: 1rem;
 
         & h1 {
             margin: 0px;
+        }
+    }
+
+    .header-right {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-end;
+        gap: .4rem;
+
+        & button {
+            border: none;
+            font-size: 1rem;
+            color: #f0ede2;
+            padding: 1rem;
+            background-color: #505050;
+            width: 4rem;
+
+            &:hover {
+                background-color: #606060;
+                cursor: pointer;
+            }
+            &:active {
+                background-color: #707070;
+            }
         }
     }
 
