@@ -86,8 +86,6 @@
     function handleClearClick() {
         if (editingCreature) {
             editingCreature.conditions = [];
-            round = 1;
-            editingCreature = undefined;
         }
     }
     function handleDeleteClick(id: number) {
@@ -304,7 +302,7 @@
     .creature-team-friendly .creature-drag-handle,
     .creature-team-friendly .creature-kill,
     .creature-team-friendly .creature-delete {
-        background-color: #307030;
+        background-color: #303070;
     }
     .creature-team-neutral .creature-drag-handle,
     .creature-team-neutral .creature-kill,
@@ -319,7 +317,7 @@
     .creature-dead .creature-drag-handle,
     .creature-dead .creature-kill,
     .creature-dead .creature-delete {
-        background-color: #303030;
+        background-color: #202020;
     }
     .creature-delete,
     .creature-kill {

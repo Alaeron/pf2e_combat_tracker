@@ -54,7 +54,7 @@
         transition: 0.3s;
     }
     .creature-team-friendly {
-        background-color: #307030;
+        background-color: #303070;
     }
     .creature-team-neutral {
         background-color: #707030;
@@ -63,7 +63,7 @@
         background-color: #703030;
     }
     .creature-dead {
-        background-color: #303030;
+        background-color: #202020;
     }
     .creature-dead .name {
         text-decoration: line-through;
