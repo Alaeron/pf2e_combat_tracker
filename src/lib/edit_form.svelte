@@ -75,7 +75,11 @@
         }
     });
 
-    function handleUnselectedClick(e: MouseEvent & { currentTarget: EventTarget & HTMLDivElement }) {
+    function handleUnselectedClick(e:
+        MouseEvent & { currentTarget: EventTarget & HTMLDivElement }
+        | KeyboardEvent & { currentTarget: EventTarget & HTMLDivElement }
+    ) {
+        e.preventDefault();
         let newValue: number | null = null;
 
         if (allConditions.find((condition) => {
@@ -88,7 +92,11 @@
             value: newValue
         });
     }
-    function handleSelectedClick(e: MouseEvent & { currentTarget: EventTarget & HTMLDivElement }) {
+    function handleSelectedClick(e:
+        MouseEvent & { currentTarget: EventTarget & HTMLDivElement }
+        | KeyboardEvent & { currentTarget: EventTarget & HTMLDivElement }
+    ) {
+        e.preventDefault();
         let targetCondition = creature.conditions.find((condition) => {
             return condition.name === e.currentTarget.innerText
         });
@@ -108,8 +116,7 @@
             <div class="all-conditions-list">
                 <span>Conditions</span>
                 {#each unselectedConditions as condition (condition.name)}
-                <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-                <div class="condition-wrapper" onclick="{handleUnselectedClick}">
+                <div class="condition-wrapper" onclick="{handleUnselectedClick}" onkeypress={handleUnselectedClick} role="button" tabindex="0">
                     <Condition name={condition.name}  value={null} />
                 </div>
                 {/each}
@@ -119,8 +126,7 @@
                 <span>Current</span>
                 {#if creature }
                 {#each creature.conditions as condition (condition.name)}
-                <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-                <div class="condition-wrapper" onclick="{handleSelectedClick}">
+                <div class="condition-wrapper" onclick="{handleSelectedClick}" onkeypress={handleSelectedClick}  role="button" tabindex="0">
                     <Condition name={condition.name}  value={null} />
                 </div>
                 {/each}

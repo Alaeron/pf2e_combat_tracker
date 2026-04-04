@@ -23,6 +23,7 @@
         name: string
     }
 
+    /*
     let defaultCreatures: CreatureType[] = [
         {
             id: 1,
@@ -290,6 +291,8 @@
         }
     ]
     let creatures = $state<CreatureType[]>(defaultCreatures);
+    */
+    let creatures = $state<CreatureType[]>([]);
     let round = $state<number>(1);
     let showAddForm = $state<boolean>(false);
     let showEditForm = $state<boolean>(false);

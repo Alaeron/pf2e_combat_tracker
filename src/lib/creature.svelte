@@ -11,12 +11,11 @@
 <div class="creature">
     <span class="order">{order}</span>
     <span class="name">{name}</span>
-    <div class="conditions">
+    <div class="conditions" onclick={handleEditClick} onkeypress="{handleEditClick}" role="button" tabindex="0">
         {#each conditions as condition, index (index)}
         <Condition name={condition.name} value={condition.value}/>
         {/each}
-        <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-        <div class="edit-overlay" onclick={handleEditClick}><span>click to edit</span></div>
+        <div class="edit-overlay"><span>click to edit</span></div>
     </div>
 </div>
 
