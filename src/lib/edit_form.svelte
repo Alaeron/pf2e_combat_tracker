@@ -1,14 +1,26 @@
 <script lang="ts">
 	import Condition from '$lib/condition.svelte';
+    import type { MouseEventHandler } from 'svelte/elements';
 
     let {
         showEditForm = $bindable(),
         creature = $bindable(),
+    } : {
+        showEditForm: boolean,
+        creature: {
+            id: number,
+            name: string,
+            order: number,
+            conditions: {
+                name: string,
+                value: number | null
+            }[]
+        }
     } = $props();
 
     let dialog = $state<HTMLDialogElement>();
 
-    let allConditions = [
+    let allConditions: { name: string, requires_value: boolean }[] = [
         { name: "Blinded", requires_value: false },
         { name: "Clumsy", requires_value: true },
         { name: "Concealed", requires_value: false },
@@ -47,6 +59,14 @@
         { name: "Unnoticed", requires_value: false },
         { name: "Wounded", requires_value: true }
     ]
+    let unselectedConditions = $derived.by(() => {
+        if (!creature?.conditions) {
+            return []
+        }
+        return allConditions.filter((condition) => {
+            return creature.conditions.find((element) => condition.name === element.name) === undefined;
+        });
+    });
 
     $effect(() => {
         if (showEditForm && dialog) {
@@ -55,6 +75,28 @@
             dialog?.close()
         }
     });
+
+    function handleUnselectedClick(e: MouseEventHandler<HTMLDivElement> & { currentTarget: EventTarget & HTMLDivElement }) {
+        let newValue: number | null = null;
+
+        if (allConditions.find((condition) => {
+            return condition.name === e.currentTarget.innerText
+        })?.requires_value) {
+            newValue = 1;
+        }
+        creature.conditions.push({
+            name: e.currentTarget.innerText,
+            value: newValue
+        });
+    }
+    function handleSelectedClick(e: MouseEventHandler<HTMLDivElement> & { currentTarget: EventTarget & HTMLDivElement }) {
+        let targetCondition = creature.conditions.find((condition) => {
+            return condition.name === e.currentTarget.innerText
+        });
+        if (targetCondition) {
+            creature.conditions.splice(creature.conditions.indexOf(targetCondition), 1);
+        }
+    }
 </script>
 
 <dialog
@@ -66,8 +108,9 @@
         <div class="conditions-list-wrapper">
             <div class="all-conditions-list">
                 <span>Conditions</span>
-                {#each allConditions as condition (condition.name)}
-                <div class="condition-wrapper">
+                {#each unselectedConditions as condition (condition.name)}
+                <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+                <div class="condition-wrapper" onclick="{handleUnselectedClick}">
                     <Condition name={condition.name}  value={null} />
                 </div>
                 {/each}
@@ -77,15 +120,14 @@
                 <span>Current</span>
                 {#if creature }
                 {#each creature.conditions as condition (condition.name)}
-                <div class="condition-wrapper">
+                <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+                <div class="condition-wrapper" onclick="{handleSelectedClick}">
                     <Condition name={condition.name}  value={null} />
                 </div>
                 {/each}
                 {/if}
             </div>
         </div>
-        <input type="submit" value="Save"/>
-
     </form>
 </dialog>
 
@@ -122,23 +164,7 @@
         gap: .2rem;
         min-width: 10rem;
     }
-    input[type="submit"] {
-        border: none;
-        font-size: 1rem;
-        padding: .2rem .4rem;
-        background-color: #606060;
-        color: #f0ede2;
-    }
-    input[type="submit"]{
-        background-color: #707070;
-        width: 4rem;
-
-        &:hover {
-            background-color: #808080;
-            cursor: pointer;
-        }
-        &:active {
-            background-color: #909090;
-        }
+    .condition-wrapper:hover {
+        cursor: pointer;
     }
 </style>
