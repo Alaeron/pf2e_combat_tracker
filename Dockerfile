@@ -15,6 +15,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
         nano \
+        openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 4173 5173
