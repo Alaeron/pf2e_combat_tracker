@@ -79,7 +79,12 @@
         }
     }
     function handleDeleteClick(id: number) {
-        creatures = creatures.filter((creature) => creature.id !== id);
+        creatures = creatures
+            .filter((creature) => creature.id !== id)
+            .map((item: CreatureType, index: number) => {
+                item.order = index + 1;
+                return item;
+            })
     }
     function handleLevelIncrease(data: ClickData) {
         if (editingCreature && data?.name) {
