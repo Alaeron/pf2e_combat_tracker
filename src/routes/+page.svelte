@@ -25,6 +25,9 @@
         })
     }
     function handleClickPrevious() {
+        if (creatures.length === 0) {
+            return;
+        }
         let creature = creatures.pop();
         if (creature) {
             creatures.unshift(creature);
@@ -37,6 +40,9 @@
         }
     }
     function handleClickNext() {
+        if (creatures.length === 0) {
+            return;
+        }
         let creature = creatures.splice(0, 1)[0];
         creatures.push(creature);
 
@@ -78,6 +84,8 @@
     function handleClearClick() {
         if (editingCreature) {
             editingCreature.conditions = [];
+            round = 1;
+            editingCreature = undefined;
         }
     }
     function handleDeleteClick(id: number) {
@@ -108,6 +116,32 @@
                     editingCreature.conditions.splice(index, 1);
                 }
             }
+        }
+    }
+    function handleKeyboardShortcuts(e: KeyboardEvent) {
+        // Don't activate when editing forms are open
+        if (showAddForm || showEditForm) {
+            return;
+        }
+        switch (e.key) {
+            case "a":
+                showAddForm = true;
+                e.preventDefault()
+                break;
+            case "n":
+            case "ArrowRight":
+            case " ":
+                e.preventDefault();
+                handleClickNext();
+                break;
+            case "b":
+            case "ArrowLeft":
+            case "Backspace":
+                e.preventDefault();
+                handleClickPrevious();
+                break;
+            default:
+                break;
         }
     }
 </script>
@@ -163,6 +197,8 @@
     onLevelIncrease={handleLevelIncrease}
     onLevelDecrease={handleLevelDecrease}
 />
+
+<svelte:window on:keydown={handleKeyboardShortcuts} />
 
 <style>
     :global(html, body) {
