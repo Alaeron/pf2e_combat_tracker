@@ -1,6 +1,7 @@
 <script lang="ts">
     export interface IAddFormOnSubmitData {
-        name: string
+        name: string,
+        team: string
     }
     interface IAddFormProps {
         showAddForm: boolean,
@@ -13,6 +14,7 @@
 
     let dialog = $state<HTMLDialogElement>();
     let name = $state<string>('');
+    let team = $state<string>('environment');
 
     $effect(() => {
         if (showAddForm && dialog) {
@@ -23,8 +25,9 @@
     });
 
     function handleSubmit() {
-        onSubmit?.({ name });
+        onSubmit?.({ name, team });
         name = '';
+        team = '';
     }
 </script>
 
@@ -34,11 +37,30 @@
     onclick={(e) => { if (e.target === dialog) dialog.close(); }}
 >
     <form onsubmit={handleSubmit}>
-        <label for="name">Name</label>
-        <input name="name" type=text bind:value={name}/>
+        <fieldset>
+            <label for="name">Name</label>
+            <input name="name" type="text" bind:value={name}/>
+        </fieldset>
 
+        <fieldset>
+            <div>
+                <label for="environment">Environment</label>
+                <input id="environment" name="team" type="radio" value="environment" bind:group={team}/>
+            </div>
+            <div>
+                <label for="friendly">Friendly</label>
+                <input id="friendly" name="team" type="radio" value="friendly" bind:group={team}/>
+            </div>
+            <div>
+                <label for="neutral">Neutral</label>
+                <input id="neutral" name="team" type="radio" value="neutral" bind:group={team}/>
+            </div>
+            <div>
+                <label for="hostile">Hostile</label>
+                <input id="hostile" name="team" type="radio" value="hostile" bind:group={team}/>
+            </div>
+        </fieldset>
         <input type="submit" value="Add"/>
-
     </form>
 </dialog>
 
@@ -55,11 +77,28 @@
         background-color: #303030;
         padding: 1rem;
         display: flex;
-        flex-flow: row nowrap;
+        flex-flow: column nowrap;
         gap: .5rem;
         justify-content: center;
         align-items: center;
         font-size: 1.2rem;
+    }
+    fieldset {
+        border: none;
+        display: flex;
+        flex-flow: column;
+
+        & > div {
+            flex-grow: 1;
+            display: flex;
+            flex-flow: row;
+            justify-content: space-between;
+            gap: 1rem;
+
+            & label {
+                cursor: pointer;
+            }
+        }
     }
     input[type="submit"],
     input[type="text"] {
@@ -68,6 +107,11 @@
         padding: .2rem .4rem;
         background-color: #606060;
         color: #f0ede2;
+    }
+    input[type="radio"] {
+        cursor: pointer;
+        transform: scale(1.2);
+        background-color: black;
     }
     input[type="submit"]{
         background-color: #707070;

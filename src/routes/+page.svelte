@@ -72,6 +72,8 @@
             id: nextId,
             name: data.name.trim(),
             order: nextOrder,
+            isDead: false,
+            team: data.team,
             conditions: []
         })
     }
@@ -95,6 +97,12 @@
                 item.order = index + 1;
                 return item;
             })
+    }
+    function handleKillClick(id: number) {
+        let targetCreature = creatures.find((creature) => creature.id === id);
+        if (targetCreature) {
+            targetCreature.isDead = ! targetCreature.isDead;
+        }
     }
     function handleLevelIncrease(data: IEditFormOnLevelIncreaseData) {
         if (editingCreature && data?.name) {
@@ -171,14 +179,17 @@
 >
     {#each creatures as creature (creature.id)}
     <div
-        class="creature-wrapper"
+        class="creature-wrapper {creature.isDead ? 'creature-dead': ''} creature-team-{creature.team}"
         animate:flip="{{duration: 200}}"
     >
         <div class="creature-drag-handle" use:dragHandle >
             <span>≡</span>
         </div>
-        <Creature name={creature.name} order={creature.order} conditions={creature.conditions} onEditClick={handleClickEdit} />
+        <Creature name={creature.name} order={creature.order} isDead={creature.isDead} team={creature.team} conditions={creature.conditions} onEditClick={handleClickEdit} />
 
+        <button class="creature-kill" onclick={() => handleKillClick(creature.id)} data-id={creature.id}>
+            <span>💀</span>
+        </button>
         <button class="creature-delete" onclick={() => handleDeleteClick(creature.id)} data-id={creature.id}>
             <span>🗙</span>
         </button>
@@ -278,7 +289,7 @@
     .creature-wrapper {
         display: grid;
         grid-template-rows: auto;
-        grid-template-columns: 2rem 1fr 2rem;
+        grid-template-columns: 2rem 1fr 2rem 2rem;
 
         & .creature-drag-handle {
             background-color: #404040;
@@ -290,7 +301,28 @@
             color: #8f8f8f;
         }
     }
-    .creature-delete {
+    .creature-team-friendly .creature-drag-handle,
+    .creature-team-friendly .creature-kill,
+    .creature-team-friendly .creature-delete {
+        background-color: #307030;
+    }
+    .creature-team-neutral .creature-drag-handle,
+    .creature-team-neutral .creature-kill,
+    .creature-team-neutral .creature-delete {
+        background-color: #707030;
+    }
+    .creature-team-hostile .creature-drag-handle,
+    .creature-team-hostile .creature-kill,
+    .creature-team-hostile .creature-delete {
+        background-color: #703030;
+    }
+    .creature-dead .creature-drag-handle,
+    .creature-dead .creature-kill,
+    .creature-dead .creature-delete {
+        background-color: #303030;
+    }
+    .creature-delete,
+    .creature-kill {
         background-color: #404040;
         display: flex;
         justify-content: center;
@@ -314,6 +346,6 @@
         justify-content: center;
         font-size: 1.5rem;
         padding: .5rem 0rem;
-        grid-column: 1 / 4;
+        grid-column: 1 / 5;
     }
 </style>

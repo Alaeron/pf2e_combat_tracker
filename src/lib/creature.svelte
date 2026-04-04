@@ -6,16 +6,22 @@
         id: number,
         name: string,
         order: number,
-        conditions: ICondition[]
+        conditions: ICondition[],
+        isDead: boolean,
+        team: string
     }
     interface ICreatureProps {
         name: string,
         order: number,
         conditions: ICondition[],
+        isDead?: boolean,
+        team: string,
         onEditClick: CallableFunction
     }
 
-    let { name, order, conditions, onEditClick }: ICreatureProps = $props();
+    let { name, order, conditions, isDead = false, team, onEditClick }: ICreatureProps = $props();
+    let classDead = $derived(isDead ? "creature-dead": "");
+    let classTeam = $derived(`creature-team-${team}`);
 
     export interface ICreatureOnEditClickData {
         name: string
@@ -25,7 +31,7 @@
     }
 </script>
 
-<div class="creature">
+<div class="creature {classDead} {classTeam}">
     <span class="order">{order}</span>
     <span class="name">{name}</span>
     <div class="conditions" onclick={handleEditClick} onkeypress="{handleEditClick}" role="button" tabindex="0">
@@ -46,6 +52,21 @@
         font-size: 18px;
         padding: .8rem 1rem .8rem 0.1rem;
         transition: 0.3s;
+    }
+    .creature-team-friendly {
+        background-color: #307030;
+    }
+    .creature-team-neutral {
+        background-color: #707030;
+    }
+    .creature-team-hostile {
+        background-color: #703030;
+    }
+    .creature-dead {
+        background-color: #303030;
+    }
+    .creature-dead .name {
+        text-decoration: line-through;
     }
     .order {
         flex-basis: 1rem;
