@@ -1,17 +1,11 @@
 <script lang="ts">
 	import Condition from '$lib/condition.svelte';
 
-    interface ConditionType {
-        name: string,
-        value: number | null
-    }
+    let { name, order, conditions, onEditClick } = $props();
 
-    interface Props {
-        name: string,
-        order: number,
-        conditions: ConditionType[]
+    function handleEditClick() {
+        onEditClick?.({ name });
     }
-    let { name, order, conditions }: Props = $props();
 </script>
 
 <div class="creature">
@@ -21,6 +15,8 @@
         {#each conditions as condition, index (index)}
         <Condition name={condition.name} value={condition.value}/>
         {/each}
+        <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+        <div class="edit-overlay" onclick={handleEditClick}><span>click to edit</span></div>
     </div>
 </div>
 
@@ -43,5 +39,21 @@
         display: flex;
         flex-flow: row wrap;
         gap: 4px;
+        position: relative;
+    }
+    .edit-overlay {
+        display: none;
+    }
+    .conditions:hover .edit-overlay {
+        background-color: rgba(139, 139, 139, 0.8);
+        position: absolute;
+        left: 0;
+        right:0;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
     }
 </style>

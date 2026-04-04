@@ -1,6 +1,6 @@
 <script lang="ts">
     import {flip} from "svelte/animate";
-    import {dndzone, dragHandleZone, dragHandle} from "svelte-dnd-action";
+    import {dragHandleZone, dragHandle} from "svelte-dnd-action";
 	import Creature from '$lib/creature.svelte';
     import AddForm from "$lib/add_form.svelte";
     import EditForm from "$lib/edit_form.svelte";
@@ -17,6 +17,9 @@
         conditions: ConditionType[]
     }
     interface AddFormData {
+        name: string
+    }
+    interface EditClickData {
         name: string
     }
 
@@ -290,17 +293,17 @@
     let round = $state<number>(1);
     let showAddForm = $state<boolean>(false);
     let showEditForm = $state<boolean>(false);
+    let editingCreature = $state<CreatureType | undefined>(undefined);
 
     function handleDndConsider(e: CustomEvent) {
         creatures = e.detail.items;
     }
     function handleDndFinalize(e: CustomEvent) {
-        // Update the initiatize order when drag and dropped
+        // Update the initiative order when drag and dropped
         creatures = e.detail.items.map((item: CreatureType, index: number) => {
             item.order = index + 1;
             return item;
         })
-        console.log($state.snapshot(creatures));
     }
     function handleClickNext() {
         let creature = creatures.splice(0, 1)[0];
@@ -334,7 +337,12 @@
             conditions: []
         })
     }
-
+    function handleClickEdit(data: EditClickData) {
+        editingCreature = creatures.find((creature) => creature.name === data.name);
+        if (editingCreature) {
+            showEditForm = true;
+        }
+    }
 </script>
 
 <header>
@@ -361,18 +369,16 @@
     onfinalize="{handleDndFinalize}"
 >
     {#each creatures as creature (creature.id)}
-    <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
     <div
         class="creature-wrapper"
         animate:flip="{{duration: 200}}"
-        onclick={() => (showEditForm = true)}
     >
         <div class="creature-drag-handle" use:dragHandle >
             <span>≡</span>
         </div>
-        <Creature name={creature.name} order={creature.order} conditions={creature.conditions} />
+        <Creature name={creature.name} order={creature.order} conditions={creature.conditions} onEditClick={handleClickEdit} />
 
-        {#if creature.order === creatures.length }
+        {#if creature.order === Math.max(...creatures.map(creature => creature.order)) }
         <div class="new-round-divider">Round {round + 1}</div>
         {/if}
     </div>
@@ -380,7 +386,7 @@
 </div>
 
 <AddForm bind:showAddForm onSubmit={handleAddFormSubmit}/>
-<EditForm bind:showEditForm />
+<EditForm bind:showEditForm creature={editingCreature}/>
 
 <style>
     :global(html, body) {

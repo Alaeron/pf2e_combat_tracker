@@ -3,12 +3,7 @@
 
     let {
         showEditForm = $bindable(),
-        creature = {
-            id: null,
-            name: '',
-            order: null,
-            conditions: [],
-        },
+        creature = $bindable(),
     } = $props();
 
     let dialog = $state<HTMLDialogElement>();
@@ -79,11 +74,13 @@
 
             <div class="current-conditions-list">
                 <span>Current</span>
+                {#if creature }
                 {#each creature.conditions as condition (condition.name)}
                 <div class="condition-wrapper">
                     <Condition name={condition.name}  value={null} />
                 </div>
                 {/each}
+                {/if}
             </div>
         </div>
         <input type="submit" value="Save"/>
