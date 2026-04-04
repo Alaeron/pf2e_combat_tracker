@@ -1,8 +1,9 @@
 <script lang="ts">
     import {flip} from "svelte/animate";
-    import {dndzone} from "svelte-dnd-action";
+    import {dndzone, dragHandleZone, dragHandle} from "svelte-dnd-action";
 	import Creature from '$lib/creature.svelte';
     import AddForm from "$lib/add_form.svelte";
+    import EditForm from "$lib/edit_form.svelte";
 
     interface ConditionType {
         name: string,
@@ -288,6 +289,7 @@
     let creatures = $state<CreatureType[]>(defaultCreatures);
     let round = $state<number>(1);
     let showAddForm = $state<boolean>(false);
+    let showEditForm = $state<boolean>(false);
 
     function handleDndConsider(e: CustomEvent) {
         creatures = e.detail.items;
@@ -316,14 +318,23 @@
             alert(`Creature with name "${data.name}" already exists!`)
             return;
         }
+        let nextId = 1;
+        let nextOrder = 1;
 
+        if (creatures.length > 0) {
+            nextId = Math.max(...creatures.map(creature => creature.id)) + 1;
+        }
+        if (creatures.length > 0) {
+            nextOrder = Math.max(...creatures.map(creature => creature.order)) + 1;
+        }
         creatures.push({
-            id: Math.max(...creatures.map(creature => creature.id)) + 1,
-            name: data.name,
-            order:  Math.max(...creatures.map(creature => creature.order)) + 1,
+            id: nextId,
+            name: data.name.trim(),
+            order: nextOrder,
             conditions: []
         })
     }
+
 </script>
 
 <header>
@@ -342,7 +353,7 @@
 
 <div
     class="initiative-list"
-    use:dndzone={{
+    use:dragHandleZone={{
         items: creatures,
         dropTargetStyle: { outline: 'none'}
     }}
@@ -350,7 +361,15 @@
     onfinalize="{handleDndFinalize}"
 >
     {#each creatures as creature (creature.id)}
-    <div animate:flip="{{duration: 200}}">
+    <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+    <div
+        class="creature-wrapper"
+        animate:flip="{{duration: 200}}"
+        onclick={() => (showEditForm = true)}
+    >
+        <div class="creature-drag-handle" use:dragHandle >
+            <span>≡</span>
+        </div>
         <Creature name={creature.name} order={creature.order} conditions={creature.conditions} />
 
         {#if creature.order === creatures.length }
@@ -361,6 +380,7 @@
 </div>
 
 <AddForm bind:showAddForm onSubmit={handleAddFormSubmit}/>
+<EditForm bind:showEditForm />
 
 <style>
     :global(html, body) {
@@ -437,10 +457,26 @@
         gap: 8px;
         margin: 0rem .4rem;
     }
+    .creature-wrapper {
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: 2rem 1fr;
+
+        & .creature-drag-handle {
+            background-color: #404040;
+            font-size: 2rem;
+            width: 2rem;
+            padding: 0rem 0rem .5rem 0.2rem;
+            display: flex;
+            align-items: center;
+            color: #c0bfba;
+        }
+    }
     .new-round-divider {
         display: flex;
         justify-content: center;
         font-size: 1.5rem;
         padding: .5rem 0rem;
+        grid-column: 1/3;
     }
 </style>

@@ -32,13 +32,8 @@
         gap: 1rem;
         background-color: #404040;
         font-size: 18px;
-        padding: .8rem 1rem;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        padding: .8rem 1rem .8rem 0.1rem;
         transition: 0.3s;
-
-        &:hover {
-            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-        }
     }
     .name {
         text-wrap: nowrap;
