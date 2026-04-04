@@ -15,6 +15,7 @@
         max-height: 1.5rem;
         white-space: nowrap;
         text-align: center;
+        flex-basis: 6rem;
     }
 
     /* degrees of detection */

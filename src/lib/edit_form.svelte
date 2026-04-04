@@ -97,6 +97,7 @@
             name: e.currentTarget.innerText,
             value: newValue
         });
+        creature.conditions = creature.conditions.sort((a, b) => a.name.localeCompare(b.name));
     }
     function handleSelectedClick(e:
         MouseEvent & { currentTarget: EventTarget & HTMLDivElement }
@@ -109,6 +110,7 @@
         if (targetCondition) {
             creature.conditions.splice(creature.conditions.indexOf(targetCondition), 1);
         }
+        creature.conditions = creature.conditions.sort((a, b) => a.name.localeCompare(b.name));
     }
     function handleSelectedClear() {
         onClearClick?.({});
