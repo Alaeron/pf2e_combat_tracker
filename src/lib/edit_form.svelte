@@ -4,6 +4,9 @@
     let {
         showEditForm = $bindable(),
         creature = $bindable(),
+        onClearClick,
+        onLevelIncrease,
+        onLevelDecrease
     } : {
         showEditForm: boolean,
         creature: {
@@ -14,7 +17,10 @@
                 name: string,
                 value: number | null
             }[]
-        }
+        },
+        onClearClick: CallableFunction,
+        onLevelIncrease: CallableFunction,
+        onLevelDecrease: CallableFunction
     } = $props();
 
     let dialog = $state<HTMLDialogElement>();
@@ -104,6 +110,25 @@
             creature.conditions.splice(creature.conditions.indexOf(targetCondition), 1);
         }
     }
+    function handleSelectedClear() {
+        onClearClick?.({});
+    }
+    function handleSelectedIncrease(e:
+        MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }
+        | KeyboardEvent & { currentTarget: EventTarget & HTMLButtonElement }
+    ) {
+        let name = e.currentTarget.closest('.condition-row')?.querySelector('.condition')?.innerHTML;
+        name = name?.trim();
+        onLevelIncrease?.({name});
+    }
+    function handleSelectedDecrease(e:
+        MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }
+        | KeyboardEvent & { currentTarget: EventTarget & HTMLButtonElement }
+    ) {
+        let name = e.currentTarget.closest('.condition-row')?.querySelector('.condition')?.innerHTML;
+        name = name?.trim();
+        onLevelDecrease?.({name});
+    }
 </script>
 
 <dialog
@@ -113,24 +138,40 @@
 >
     <form>
         <div class="conditions-list-wrapper">
-            <div class="all-conditions-list">
+            <div>
                 <span>Conditions</span>
-                {#each unselectedConditions as condition (condition.name)}
-                <div class="condition-wrapper" onclick="{handleUnselectedClick}" onkeypress={handleUnselectedClick} role="button" tabindex="0">
-                    <Condition name={condition.name}  value={null} />
+                <div class="all-conditions-list">
+                    {#each unselectedConditions as condition (condition.name)}
+                    <div class="condition-wrapper" onclick="{handleUnselectedClick}" onkeypress={handleUnselectedClick} role="button" tabindex="0">
+                        <Condition name={condition.name}  value={null} />
+                    </div>
+                    {/each}
                 </div>
-                {/each}
             </div>
 
-            <div class="current-conditions-list">
-                <span>Current</span>
-                {#if creature }
-                {#each creature.conditions as condition (condition.name)}
-                <div class="condition-wrapper" onclick="{handleSelectedClick}" onkeypress={handleSelectedClick}  role="button" tabindex="0">
-                    <Condition name={condition.name}  value={null} />
+            <div>
+                <span class="current-conditions-header">
+                    <span>Current</span>
+                    <button onclick="{handleSelectedClear}">Clear</button>
+                </span>
+                <div class="current-conditions-list">
+                    {#if creature }
+                    {#each creature.conditions as condition (condition.name)}
+                    <div class="condition-row">
+                        <div class="condition-wrapper" onclick="{handleSelectedClick}" onkeypress={handleSelectedClick} role="button" tabindex="0">
+                            <Condition name={condition.name}  value={null} />
+                        </div>
+                        <div class="condition-level-controls">
+                            {#if condition.value}
+                            <button onclick={handleSelectedDecrease}>-</button>
+                            <span>{condition.value}</span>
+                            <button onclick={handleSelectedIncrease}>+</button>
+                            {/if}
+                        </div>
+                    </div>
+                    {/each}
+                    {/if}
                 </div>
-                {/each}
-                {/if}
             </div>
         </div>
     </form>
@@ -158,16 +199,57 @@
     .conditions-list-wrapper {
         display: flex;
         flex-flow: row;
-        overflow-y: scroll;
         max-width: 90vw;
     }
     .all-conditions-list,
     .current-conditions-list {
         display: flex;
         flex-direction: column;
-        max-height: 90vh;
-        gap: .2rem;
+        max-height: 80vh;
+        gap: .4rem;
         min-width: 10rem;
+        overflow-y: scroll;
+        padding: 0rem .4rem 0rem .2rem;
+        margin-top: .4rem;
+    }
+    .current-conditions-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .condition-wrapper {
+        display: flex;
+        flex-grow: 1;
+        max-height: 1.6rem;
+        width: 100%;
+    }
+    .condition-row {
+        display: flex;
+        flex-flow: row;
+        justify-content: space-between;
+    }
+    .condition-level-controls {
+        display: flex;
+        align-self: flex-end;
+    }
+    .condition-row button,
+    .condition-row span {
+        width: 1.5rem;
+        text-align: center;
+    }
+    button {
+        border-radius: 0;
+        border: none;
+        background-color: #606060;
+        color: #f0ede2;
+
+        &:hover {
+            background-color: #707070;
+            cursor: pointer;
+        }
+        &:active {
+            background-color: #808080;
+        }
     }
     .condition-wrapper:hover {
         cursor: pointer;

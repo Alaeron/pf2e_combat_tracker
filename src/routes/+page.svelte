@@ -9,17 +9,13 @@
         name: string,
         value: number | null
     }
-
     interface CreatureType {
         id: number,
         name: string,
         order: number,
         conditions: ConditionType[]
     }
-    interface AddFormData {
-        name: string
-    }
-    interface EditClickData {
+    interface ClickData {
         name: string
     }
 
@@ -317,7 +313,7 @@
             round += 1;
         }
     }
-    function handleAddFormSubmit(data: AddFormData) {
+    function handleAddFormSubmit(data: ClickData) {
         showAddForm = false;
 
         if ( creatures.some(creature => creature.name === data.name) ) {
@@ -340,10 +336,37 @@
             conditions: []
         })
     }
-    function handleClickEdit(data: EditClickData) {
+    function handleClickEdit(data: ClickData) {
         editingCreature = creatures.find((creature) => creature.name === data.name);
         if (editingCreature) {
             showEditForm = true;
+        }
+    }
+    function handleClearClick() {
+        if (editingCreature) {
+            editingCreature.conditions = [];
+        }
+    }
+    function handleLevelIncrease(data: ClickData) {
+        if (editingCreature && data?.name) {
+            let index = editingCreature.conditions.map((e) => { return e.name }).indexOf(data.name)
+
+            if (editingCreature.conditions[index].value) {
+                editingCreature.conditions[index].value += 1;
+            }
+        }
+    }
+    function handleLevelDecrease(data: ClickData) {
+        if (editingCreature && data?.name) {
+            let index = editingCreature.conditions.map((e) => { return e.name }).indexOf(data.name)
+
+            if (editingCreature.conditions[index].value) {
+                editingCreature.conditions[index].value -= 1;
+
+                if (editingCreature.conditions[index].value < 1) {
+                    editingCreature.conditions.splice(index, 1);
+                }
+            }
         }
     }
 </script>
@@ -389,7 +412,13 @@
 </div>
 
 <AddForm bind:showAddForm onSubmit={handleAddFormSubmit}/>
-<EditForm bind:showEditForm creature={editingCreature}/>
+<EditForm
+    bind:showEditForm
+    creature={editingCreature}
+    onClearClick={handleClearClick}
+    onLevelIncrease={handleLevelIncrease}
+    onLevelDecrease={handleLevelDecrease}
+/>
 
 <style>
     :global(html, body) {

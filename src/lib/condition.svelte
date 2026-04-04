@@ -7,8 +7,14 @@
 
 <style>
     .condition {
-        font-size: 14px;
+        font-size: 1rem;
         padding: .1rem .5rem .2rem .5rem;
+        flex-grow: 1;
+        flex-shrink: 1;
+        max-width: 14rem;
+        max-height: 1.5rem;
+        white-space: nowrap;
+        text-align: center;
     }
 
     /* degrees of detection */
