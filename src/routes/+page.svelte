@@ -19,275 +19,6 @@
         name: string
     }
 
-    /*
-    let defaultCreatures: CreatureType[] = [
-        {
-            id: 1,
-            name:"Blood",
-            order: 1,
-            conditions: [
-                // { name: "Blinded", value: null },
-                // { name: "Clumsy", value: 1 },
-                // { name: "Concealed", value: null },
-                // { name: "Confused", value: null },
-                // { name: "Controlled", value: null },
-                // { name: "Dazzled", value: null },
-                // { name: "Deafened", value: null },
-                // { name: "Doomed", value: 1 },
-                // { name: "Drained", value: 1 },
-                // { name: "Dying", value: 1 },
-                // { name: "Encumbered", value: null },
-                // { name: "Enfeebled", value: 1 },
-                // { name: "Fascinated", value: null },
-                // { name: "Fatigued", value: null },
-                // { name: "Fleeing", value: null },
-                // { name: "Frightened", value: 1 },
-                // { name: "Grabbed", value: null },
-                // { name: "Hidden", value: null },
-                // { name: "Immobilized", value: null },
-                // { name: "Invisible", value: null },
-                // { name: "Observed", value: null },
-                // { name: "Off-Guard", value: null },
-                // { name: "Paralyzed", value: null },
-                // { name: "Persistent Damage", value: 1 },
-                // { name: "Petrified", value: null },
-                // { name: "Prone", value: null },
-                // { name: "Quickened", value: null },
-                { name: "Restrained", value: null },
-                { name: "Sickened", value: 1 },
-                { name: "Slowed", value: 1 },
-                { name: "Stunned", value: 1 },
-                { name: "Stupefied", value: 1 },
-                { name: "Taunted", value: null },
-                { name: "Unconscious", value: null },
-                { name: "Undetected", value: null },
-                { name: "Unnoticed", value: null },
-                { name: "Wounded", value: 1 }
-            ]
-        },
-        {
-            id: 2,
-            name:"Agronakis",
-            order: 2,
-            conditions: [
-                // { name: "Blinded", value: null },
-                // { name: "Clumsy", value: 1 },
-                // { name: "Concealed", value: null },
-                // { name: "Confused", value: null },
-                // { name: "Controlled", value: null },
-                // { name: "Dazzled", value: null },
-                // { name: "Deafened", value: null },
-                // { name: "Doomed", value: 1 },
-                // { name: "Drained", value: 1 },
-                // { name: "Dying", value: 1 },
-                // { name: "Encumbered", value: null },
-                // { name: "Enfeebled", value: 1 },
-                // { name: "Fascinated", value: null },
-                // { name: "Fatigued", value: null },
-                // { name: "Fleeing", value: null },
-                // { name: "Frightened", value: 1 },
-                // { name: "Grabbed", value: null },
-                // { name: "Hidden", value: null },
-                // { name: "Immobilized", value: null },
-                // { name: "Invisible", value: null },
-                // { name: "Observed", value: null },
-                // { name: "Off-Guard", value: null },
-                // { name: "Paralyzed", value: null },
-                // { name: "Persistent Damage", value: 1 },
-                // { name: "Petrified", value: null },
-                // { name: "Prone", value: null },
-                // { name: "Quickened", value: null },
-                { name: "Restrained", value: null },
-                { name: "Sickened", value: 1 },
-                { name: "Slowed", value: 1 },
-                { name: "Stunned", value: 1 },
-                { name: "Stupefied", value: 1 },
-                { name: "Taunted", value: null },
-                { name: "Unconscious", value: null },
-                { name: "Undetected", value: null },
-                { name: "Unnoticed", value: null },
-                { name: "Wounded", value: 1 }
-            ]
-        },
-        {
-            id: 3,
-            name:"Gadzius",
-            order: 3,
-            conditions: [
-                // { name: "Blinded", value: null },
-                // { name: "Clumsy", value: 1 },
-                // { name: "Concealed", value: null },
-                // { name: "Confused", value: null },
-                // { name: "Controlled", value: null },
-                // { name: "Dazzled", value: null },
-                // { name: "Deafened", value: null },
-                // { name: "Doomed", value: 1 },
-                // { name: "Drained", value: 1 },
-                // { name: "Dying", value: 1 },
-                // { name: "Encumbered", value: null },
-                // { name: "Enfeebled", value: 1 },
-                // { name: "Fascinated", value: null },
-                // { name: "Fatigued", value: null },
-                // { name: "Fleeing", value: null },
-                // { name: "Frightened", value: 1 },
-                // { name: "Grabbed", value: null },
-                // { name: "Hidden", value: null },
-                // { name: "Immobilized", value: null },
-                // { name: "Invisible", value: null },
-                // { name: "Observed", value: null },
-                // { name: "Off-Guard", value: null },
-                // { name: "Paralyzed", value: null },
-                // { name: "Persistent Damage", value: 1 },
-                // { name: "Petrified", value: null },
-                // { name: "Prone", value: null },
-                // { name: "Quickened", value: null },
-                { name: "Restrained", value: null },
-                { name: "Sickened", value: 1 },
-                { name: "Slowed", value: 1 },
-                { name: "Stunned", value: 1 },
-                { name: "Stupefied", value: 1 },
-                { name: "Taunted", value: null },
-                { name: "Unconscious", value: null },
-                { name: "Undetected", value: null },
-                { name: "Unnoticed", value: null },
-                { name: "Wounded", value: 1 }
-            ]
-        },
-        {
-            id: 4,
-            name:"Goblin 1",
-            order: 4,
-            conditions: [
-                // { name: "Blinded", value: null },
-                // { name: "Clumsy", value: 1 },
-                // { name: "Concealed", value: null },
-                // { name: "Confused", value: null },
-                // { name: "Controlled", value: null },
-                // { name: "Dazzled", value: null },
-                // { name: "Deafened", value: null },
-                // { name: "Doomed", value: 1 },
-                // { name: "Drained", value: 1 },
-                // { name: "Dying", value: 1 },
-                // { name: "Encumbered", value: null },
-                // { name: "Enfeebled", value: 1 },
-                // { name: "Fascinated", value: null },
-                // { name: "Fatigued", value: null },
-                // { name: "Fleeing", value: null },
-                // { name: "Frightened", value: 1 },
-                // { name: "Grabbed", value: null },
-                // { name: "Hidden", value: null },
-                // { name: "Immobilized", value: null },
-                // { name: "Invisible", value: null },
-                // { name: "Observed", value: null },
-                // { name: "Off-Guard", value: null },
-                // { name: "Paralyzed", value: null },
-                // { name: "Persistent Damage", value: 1 },
-                // { name: "Petrified", value: null },
-                // { name: "Prone", value: null },
-                // { name: "Quickened", value: null },
-                { name: "Restrained", value: null },
-                { name: "Sickened", value: 1 },
-                { name: "Slowed", value: 1 },
-                { name: "Stunned", value: 1 },
-                { name: "Stupefied", value: 1 },
-                { name: "Taunted", value: null },
-                { name: "Unconscious", value: null },
-                { name: "Undetected", value: null },
-                { name: "Unnoticed", value: null },
-                { name: "Wounded", value: 1 }
-            ]
-        },
-        {
-            id: 5,
-            name:"Goblin 2",
-            order: 5,
-            conditions: [
-                // { name: "Blinded", value: null },
-                // { name: "Clumsy", value: 1 },
-                // { name: "Concealed", value: null },
-                // { name: "Confused", value: null },
-                // { name: "Controlled", value: null },
-                // { name: "Dazzled", value: null },
-                // { name: "Deafened", value: null },
-                // { name: "Doomed", value: 1 },
-                // { name: "Drained", value: 1 },
-                // { name: "Dying", value: 1 },
-                // { name: "Encumbered", value: null },
-                // { name: "Enfeebled", value: 1 },
-                // { name: "Fascinated", value: null },
-                // { name: "Fatigued", value: null },
-                // { name: "Fleeing", value: null },
-                // { name: "Frightened", value: 1 },
-                // { name: "Grabbed", value: null },
-                // { name: "Hidden", value: null },
-                // { name: "Immobilized", value: null },
-                // { name: "Invisible", value: null },
-                // { name: "Observed", value: null },
-                // { name: "Off-Guard", value: null },
-                // { name: "Paralyzed", value: null },
-                // { name: "Persistent Damage", value: 1 },
-                // { name: "Petrified", value: null },
-                // { name: "Prone", value: null },
-                // { name: "Quickened", value: null },
-                { name: "Restrained", value: null },
-                { name: "Sickened", value: 1 },
-                { name: "Slowed", value: 1 },
-                { name: "Stunned", value: 1 },
-                { name: "Stupefied", value: 1 },
-                { name: "Taunted", value: null },
-                { name: "Unconscious", value: null },
-                { name: "Undetected", value: null },
-                { name: "Unnoticed", value: null },
-                { name: "Wounded", value: 1 }
-            ]
-        },
-        {
-            id: 6,
-            name:"Bugbear 1",
-            order: 6,
-            conditions: [
-                // { name: "Blinded", value: null },
-                // { name: "Clumsy", value: 1 },
-                // { name: "Concealed", value: null },
-                // { name: "Confused", value: null },
-                // { name: "Controlled", value: null },
-                // { name: "Dazzled", value: null },
-                // { name: "Deafened", value: null },
-                // { name: "Doomed", value: 1 },
-                // { name: "Drained", value: 1 },
-                // { name: "Dying", value: 1 },
-                // { name: "Encumbered", value: null },
-                // { name: "Enfeebled", value: 1 },
-                // { name: "Fascinated", value: null },
-                // { name: "Fatigued", value: null },
-                // { name: "Fleeing", value: null },
-                // { name: "Frightened", value: 1 },
-                // { name: "Grabbed", value: null },
-                // { name: "Hidden", value: null },
-                // { name: "Immobilized", value: null },
-                // { name: "Invisible", value: null },
-                // { name: "Observed", value: null },
-                // { name: "Off-Guard", value: null },
-                // { name: "Paralyzed", value: null },
-                // { name: "Persistent Damage", value: 1 },
-                // { name: "Petrified", value: null },
-                // { name: "Prone", value: null },
-                // { name: "Quickened", value: null },
-                { name: "Restrained", value: null },
-                { name: "Sickened", value: 1 },
-                { name: "Slowed", value: 1 },
-                { name: "Stunned", value: 1 },
-                { name: "Stupefied", value: 1 },
-                { name: "Taunted", value: null },
-                { name: "Unconscious", value: null },
-                { name: "Undetected", value: null },
-                { name: "Unnoticed", value: null },
-                { name: "Wounded", value: 1 }
-            ]
-        }
-    ]
-    let creatures = $state<CreatureType[]>(defaultCreatures);
-    */
     let creatures = $state<CreatureType[]>([]);
     let round = $state<number>(1);
     let showAddForm = $state<boolean>(false);
@@ -347,6 +78,9 @@
             editingCreature.conditions = [];
         }
     }
+    function handleDeleteClick(id: number) {
+        creatures = creatures.filter((creature) => creature.id !== id);
+    }
     function handleLevelIncrease(data: ClickData) {
         if (editingCreature && data?.name) {
             let index = editingCreature.conditions.map((e) => { return e.name }).indexOf(data.name)
@@ -404,6 +138,9 @@
         </div>
         <Creature name={creature.name} order={creature.order} conditions={creature.conditions} onEditClick={handleClickEdit} />
 
+        <button class="creature-delete" onclick={() => handleDeleteClick(creature.id)} data-id={creature.id}>
+            <span>🗙</span>
+        </button>
         {#if creature.order === Math.max(...creatures.map(creature => creature.order)) }
         <div class="new-round-divider">Round {round + 1}</div>
         {/if}
@@ -498,7 +235,7 @@
     .creature-wrapper {
         display: grid;
         grid-template-rows: auto;
-        grid-template-columns: 2rem 1fr;
+        grid-template-columns: 2rem 1fr 2rem;
 
         & .creature-drag-handle {
             background-color: #404040;
@@ -510,11 +247,30 @@
             color: #8f8f8f;
         }
     }
+    .creature-delete {
+        background-color: #404040;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0rem 0rem 0.2rem 0rem;
+        border: none;
+        color: #f0ede2;
+
+        &:hover {
+            background-color: #802020;
+            cursor: pointer;
+        }
+
+        &:active{
+            background-color: #903030;
+            cursor: pointer;
+        }
+    }
     .new-round-divider {
         display: flex;
         justify-content: center;
         font-size: 1.5rem;
         padding: .5rem 0rem;
-        grid-column: 1/3;
+        grid-column: 1 / 4;
     }
 </style>
