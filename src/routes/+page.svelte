@@ -24,12 +24,25 @@
             return item;
         })
     }
+    function handleClickPrevious() {
+        let creature = creatures.pop();
+        if (creature) {
+            creatures.unshift(creature);
+        }
+
+        // If we're back to the max order, decrease the round
+        let maxOrder: number = Math.max(...creatures.map(creature => creature.order));
+        if (creatures.length > 0 && creatures[0].order === maxOrder) {
+            round -= 1;
+        }
+    }
     function handleClickNext() {
         let creature = creatures.splice(0, 1)[0];
         creatures.push(creature);
 
         // If we're back to order 1, increase the round
-        if (creatures.length > 0 && creatures[0].order === 1) {
+        let minOrder: number = Math.min(...creatures.map(creature => creature.order));
+        if (creatures.length > 0 && creatures[0].order === minOrder) {
             round += 1;
         }
     }
@@ -108,7 +121,7 @@
 </header>
 
 <div class="toolbar">
-    <button>🡐</button>
+    <button onclick={handleClickPrevious}>🡐</button>
     <span>Round {round}</span>
     <button onclick={handleClickNext}>🡒</button>
 </div>
