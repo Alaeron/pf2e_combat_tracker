@@ -41,6 +41,7 @@
         { name: "Slowed", requires_value: true },
         { name: "Stunned", requires_value: true },
         { name: "Stupefied", requires_value: true },
+        { name: "Taunted", requires_value: true },
         { name: "Unconscious", requires_value: false },
         { name: "Undetected", requires_value: false },
         { name: "Unnoticed", requires_value: false },

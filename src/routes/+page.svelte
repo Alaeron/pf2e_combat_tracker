@@ -475,7 +475,7 @@
             padding: 0rem 0rem .5rem 0.2rem;
             display: flex;
             align-items: center;
-            color: #c0bfba;
+            color: #8f8f8f;
         }
     }
     .new-round-divider {

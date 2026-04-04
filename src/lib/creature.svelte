@@ -31,15 +31,21 @@
         padding: .8rem 1rem .8rem 0.1rem;
         transition: 0.3s;
     }
+    .order {
+        flex-basis: 1rem;
+        text-align: center;
+    }
     .name {
         text-wrap: nowrap;
-        flex-basis: 15rem;
+        flex-basis: 10rem;
     }
     .conditions {
         display: flex;
         flex-flow: row wrap;
         gap: 4px;
         position: relative;
+        height: 100%;
+        width: 100%;
     }
     .edit-overlay {
         display: none;
