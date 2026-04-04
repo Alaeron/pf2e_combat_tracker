@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Condition from '$lib/condition.svelte';
-    import type { MouseEventHandler } from 'svelte/elements';
 
     let {
         showEditForm = $bindable(),
@@ -76,7 +75,7 @@
         }
     });
 
-    function handleUnselectedClick(e: MouseEventHandler<HTMLDivElement> & { currentTarget: EventTarget & HTMLDivElement }) {
+    function handleUnselectedClick(e: MouseEvent & { currentTarget: EventTarget & HTMLDivElement }) {
         let newValue: number | null = null;
 
         if (allConditions.find((condition) => {
@@ -89,7 +88,7 @@
             value: newValue
         });
     }
-    function handleSelectedClick(e: MouseEventHandler<HTMLDivElement> & { currentTarget: EventTarget & HTMLDivElement }) {
+    function handleSelectedClick(e: MouseEvent & { currentTarget: EventTarget & HTMLDivElement }) {
         let targetCondition = creature.conditions.find((condition) => {
             return condition.name === e.currentTarget.innerText
         });
