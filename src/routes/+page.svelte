@@ -1,36 +1,25 @@
 <script lang="ts">
-    import {flip} from "svelte/animate";
-    import {dragHandleZone, dragHandle} from "svelte-dnd-action";
+    import { flip } from "svelte/animate";
+    import { dragHandleZone, dragHandle } from "svelte-dnd-action";
 	import Creature from '$lib/creature.svelte';
     import AddForm from "$lib/add_form.svelte";
     import EditForm from "$lib/edit_form.svelte";
+    import type { ICreature, ICreatureOnEditClickData } from "$lib/creature.svelte";
+    import type { IAddFormOnSubmitData } from "$lib/add_form.svelte";
+    import type { IEditFormOnLevelDecreaseData, IEditFormOnLevelIncreaseData } from "$lib/edit_form.svelte";
 
-    interface ConditionType {
-        name: string,
-        value: number | null
-    }
-    interface CreatureType {
-        id: number,
-        name: string,
-        order: number,
-        conditions: ConditionType[]
-    }
-    interface ClickData {
-        name: string
-    }
-
-    let creatures = $state<CreatureType[]>([]);
+    let creatures = $state<ICreature[]>([]);
     let round = $state<number>(1);
     let showAddForm = $state<boolean>(false);
     let showEditForm = $state<boolean>(false);
-    let editingCreature = $state<CreatureType | undefined>(undefined);
+    let editingCreature = $state<ICreature|undefined>(undefined);
 
     function handleDndConsider(e: CustomEvent) {
         creatures = e.detail.items;
     }
     function handleDndFinalize(e: CustomEvent) {
         // Update the initiative order when drag and dropped
-        creatures = e.detail.items.map((item: CreatureType, index: number) => {
+        creatures = e.detail.items.map((item: ICreature, index: number) => {
             item.order = index + 1;
             return item;
         })
@@ -44,7 +33,7 @@
             round += 1;
         }
     }
-    function handleAddFormSubmit(data: ClickData) {
+    function handleAddFormSubmit(data: IAddFormOnSubmitData) {
         showAddForm = false;
 
         if ( creatures.some(creature => creature.name === data.name) ) {
@@ -67,7 +56,7 @@
             conditions: []
         })
     }
-    function handleClickEdit(data: ClickData) {
+    function handleClickEdit(data: ICreatureOnEditClickData) {
         editingCreature = creatures.find((creature) => creature.name === data.name);
         if (editingCreature) {
             showEditForm = true;
@@ -81,12 +70,12 @@
     function handleDeleteClick(id: number) {
         creatures = creatures
             .filter((creature) => creature.id !== id)
-            .map((item: CreatureType, index: number) => {
+            .map((item, index) => {
                 item.order = index + 1;
                 return item;
             })
     }
-    function handleLevelIncrease(data: ClickData) {
+    function handleLevelIncrease(data: IEditFormOnLevelIncreaseData) {
         if (editingCreature && data?.name) {
             let index = editingCreature.conditions.map((e) => { return e.name }).indexOf(data.name)
 
@@ -95,7 +84,7 @@
             }
         }
     }
-    function handleLevelDecrease(data: ClickData) {
+    function handleLevelDecrease(data: IEditFormOnLevelDecreaseData) {
         if (editingCreature && data?.name) {
             let index = editingCreature.conditions.map((e) => { return e.name }).indexOf(data.name)
 
@@ -156,7 +145,7 @@
 <AddForm bind:showAddForm onSubmit={handleAddFormSubmit}/>
 <EditForm
     bind:showEditForm
-    creature={editingCreature}
+    bind:creature={editingCreature}
     onClearClick={handleClearClick}
     onLevelIncrease={handleLevelIncrease}
     onLevelDecrease={handleLevelDecrease}

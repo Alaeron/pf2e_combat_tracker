@@ -1,21 +1,33 @@
 <script lang="ts">
-    let { name, value } = $props();
+    export interface ICondition {
+        name: string,
+        value: number | null
+    }
+    interface IConditionProps {
+        name: string,
+        value: number | null
+        autoGrow?: boolean
+    }
+    let { name, value, autoGrow = true }: IConditionProps = $props();
     let elementClass = $derived(name.toLowerCase().replace(" ", "-"))
+    let autoGrowClass = $derived(autoGrow ? "condition-grow": "")
 </script>
 
-<span class="condition {elementClass}">{name} {value}</span>
+<span class="condition {elementClass} {autoGrowClass}">{name} {value}</span>
 
 <style>
     .condition {
         font-size: 1rem;
         padding: .1rem .5rem .2rem .5rem;
-        flex-grow: 1;
         flex-shrink: 1;
         max-width: 14rem;
         max-height: 1.5rem;
         white-space: nowrap;
         text-align: center;
         flex-basis: 6rem;
+    }
+    .condition-grow {
+        flex-grow: 1;
     }
 
     /* degrees of detection */

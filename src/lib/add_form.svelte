@@ -1,8 +1,15 @@
 <script lang="ts">
+    export interface IAddFormOnSubmitData {
+        name: string
+    }
+    interface IAddFormProps {
+        showAddForm: boolean,
+        onSubmit: CallableFunction
+    }
     let {
         showAddForm = $bindable(),
         onSubmit,
-    } = $props();
+    }: IAddFormProps = $props();
 
     let dialog = $state<HTMLDialogElement>();
     let name = $state<string>('');

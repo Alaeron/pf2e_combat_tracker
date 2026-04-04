@@ -7,4 +7,4 @@ services:
       - 4173:4173 # http://localhost:4173 - Preview
       - 5173:5173 # http://localhost:5173 - Dev
     volumes:
-      - .:/app
+      - ${LOCAL_WORKSPACE_FOLDER:-./}:/app

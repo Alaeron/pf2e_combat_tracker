@@ -1,8 +1,25 @@
 <script lang="ts">
 	import Condition from '$lib/condition.svelte';
+	import type { ICondition } from '$lib/condition.svelte';
 
-    let { name, order, conditions, onEditClick } = $props();
+    export interface ICreature {
+        id: number,
+        name: string,
+        order: number,
+        conditions: ICondition[]
+    }
+    interface ICreatureProps {
+        name: string,
+        order: number,
+        conditions: ICondition[],
+        onEditClick: CallableFunction
+    }
 
+    let { name, order, conditions, onEditClick }: ICreatureProps = $props();
+
+    export interface ICreatureOnEditClickData {
+        name: string
+    }
     function handleEditClick() {
         onEditClick?.({ name });
     }
@@ -13,7 +30,7 @@
     <span class="name">{name}</span>
     <div class="conditions" onclick={handleEditClick} onkeypress="{handleEditClick}" role="button" tabindex="0">
         {#each conditions as condition, index (index)}
-        <Condition name={condition.name} value={condition.value}/>
+        <Condition name={condition.name} value={condition.value} autoGrow={false}/>
         {/each}
         <div class="edit-overlay"><span>click to edit</span></div>
     </div>

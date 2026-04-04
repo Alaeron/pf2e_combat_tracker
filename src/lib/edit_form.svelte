@@ -1,5 +1,14 @@
 <script lang="ts">
 	import Condition from '$lib/condition.svelte';
+    import type { ICreature } from './creature.svelte';
+
+    interface IEditFormProps {
+        showEditForm: boolean,
+        creature: ICreature | undefined,
+        onClearClick: CallableFunction,
+        onLevelIncrease: CallableFunction,
+        onLevelDecrease: CallableFunction
+    }
 
     let {
         showEditForm = $bindable(),
@@ -7,21 +16,7 @@
         onClearClick,
         onLevelIncrease,
         onLevelDecrease
-    } : {
-        showEditForm: boolean,
-        creature: {
-            id: number,
-            name: string,
-            order: number,
-            conditions: {
-                name: string,
-                value: number | null
-            }[]
-        },
-        onClearClick: CallableFunction,
-        onLevelIncrease: CallableFunction,
-        onLevelDecrease: CallableFunction
-    } = $props();
+    }: IEditFormProps = $props();
 
     let dialog = $state<HTMLDialogElement>();
 
@@ -58,7 +53,7 @@
         { name: "Slowed", requires_value: true },
         { name: "Stunned", requires_value: true },
         { name: "Stupefied", requires_value: true },
-        { name: "Taunted", requires_value: true },
+        { name: "Taunted", requires_value: false },
         { name: "Unconscious", requires_value: false },
         { name: "Undetected", requires_value: false },
         { name: "Unnoticed", requires_value: false },
@@ -86,6 +81,8 @@
         | KeyboardEvent & { currentTarget: EventTarget & HTMLDivElement }
     ) {
         e.preventDefault();
+        if (!creature) return;
+
         let newValue: number | null = null;
 
         if (allConditions.find((condition) => {
@@ -104,6 +101,8 @@
         | KeyboardEvent & { currentTarget: EventTarget & HTMLDivElement }
     ) {
         e.preventDefault();
+        if (!creature) return;
+
         let targetCondition = creature.conditions.find((condition) => {
             return condition.name === e.currentTarget.innerText
         });
@@ -112,8 +111,14 @@
         }
         creature.conditions = creature.conditions.sort((a, b) => a.name.localeCompare(b.name));
     }
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    export interface IEditFormOnClearClickData {}
     function handleSelectedClear() {
         onClearClick?.({});
+    }
+
+    export interface IEditFormOnLevelIncreaseData {
+        name: string
     }
     function handleSelectedIncrease(e:
         MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }
@@ -122,6 +127,10 @@
         let name = e.currentTarget.closest('.condition-row')?.querySelector('.condition')?.innerHTML;
         name = name?.trim();
         onLevelIncrease?.({name});
+    }
+
+    export interface IEditFormOnLevelDecreaseData {
+        name: string
     }
     function handleSelectedDecrease(e:
         MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }
