@@ -1,10 +1,11 @@
 <script lang="ts">
     import { flip } from "svelte/animate";
+    import { browser } from "$app/environment";
     import { dragHandleZone, dragHandle } from "svelte-dnd-action";
+    import { ChevronsLeftIcon, ChevronsRightIcon, XIcon, FrownIcon, MenuIcon } from "svelte-feather-icons";
 	import Creature from '$lib/creature.svelte';
     import AddForm from "$lib/add_form.svelte";
     import EditForm from "$lib/edit_form.svelte";
-    import { ChevronsLeftIcon, ChevronsRightIcon, XIcon, FrownIcon, MenuIcon } from "svelte-feather-icons";
     import type { ICreature, ICreatureOnEditClickData } from "$lib/creature.svelte";
     import type { IAddFormOnSubmitData } from "$lib/add_form.svelte";
     import type { IEditFormOnLevelDecreaseData, IEditFormOnLevelIncreaseData } from "$lib/edit_form.svelte";
@@ -14,6 +15,20 @@
     let showAddForm = $state<boolean>(false);
     let showEditForm = $state<boolean>(false);
     let editingCreature = $state<ICreature|undefined>(undefined);
+
+    if (browser) {
+        let creaturesLocal = localStorage.getItem("creatures");
+        let roundLocal = localStorage.getItem("round");
+
+        creatures = creaturesLocal ? JSON.parse(creaturesLocal) : [];
+        round = roundLocal ? parseInt(roundLocal) : 1;
+    }
+    $effect(() => {
+        if (browser) {
+            localStorage.setItem("creatures", JSON.stringify(creatures));
+            localStorage.setItem("round", round.toString());
+        }
+    });
 
     function handleDndConsider(e: CustomEvent) {
         creatures = e.detail.items;
@@ -157,7 +172,7 @@
     <h1>Combat Tracker</h1>
     <div class="header-right">
         <button onclick={() => (showAddForm = true)}>Add</button>
-        <button onclick={() => (creatures = [])}>Clear</button>
+        <button onclick={() => {creatures = []; round = 1;}}>Clear</button>
     </div>
 </header>
 
