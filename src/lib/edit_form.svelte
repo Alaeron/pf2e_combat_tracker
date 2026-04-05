@@ -44,7 +44,7 @@
         { name: "Observed", requires_value: false },
         { name: "Off-Guard", requires_value: false },
         { name: "Paralyzed", requires_value: false },
-        { name: "Persistent Damage", requires_value: true },
+        { name: "Persist. Damage", requires_value: true },
         { name: "Petrified", requires_value: false },
         { name: "Prone", requires_value: false },
         { name: "Quickened", requires_value: false },
@@ -196,6 +196,7 @@
         padding: 0px;
         border: none;
         color: #f0ede2;
+        max-width: 100vw;
     }
     form {
         background-color: #303030;
@@ -210,13 +211,13 @@
     .conditions-list-wrapper {
         display: flex;
         flex-flow: row;
-        max-width: 90vw;
+        max-width: 100%;
     }
     .all-conditions-list,
     .current-conditions-list {
         display: flex;
         flex-direction: column;
-        max-height: 80vh;
+        max-height: 70vh;
         gap: .4rem;
         min-width: 10rem;
         overflow-y: scroll;

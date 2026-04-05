@@ -240,7 +240,7 @@
             color: #f0ede2;
             padding: 1rem;
             background-color: #505050;
-            width: 4rem;
+            width: 4.5rem;
 
             &:hover {
                 background-color: #606060;

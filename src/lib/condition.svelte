@@ -9,7 +9,7 @@
         autoGrow?: boolean
     }
     let { name, value, autoGrow = true }: IConditionProps = $props();
-    let elementClass = $derived(name.toLowerCase().replace(" ", "-"))
+    let elementClass = $derived(name.toLowerCase().replace(/[^a-z]+/, "-"))
     let autoGrowClass = $derived(autoGrow ? "condition-grow": "")
 </script>
 
@@ -89,7 +89,7 @@
     }
 
     /* damage */
-    .persistent-damage {
+    .persist-damage {
         background-color: rgb(179, 31, 31);
     }
 

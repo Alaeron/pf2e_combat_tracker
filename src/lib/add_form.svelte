@@ -24,7 +24,8 @@
         }
     });
 
-    function handleSubmit() {
+    function handleSubmit(e: SubmitEvent) {
+        e.preventDefault();
         onSubmit?.({ name, team });
         name = '';
         team = '';
