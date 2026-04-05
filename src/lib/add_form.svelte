@@ -19,6 +19,14 @@
     $effect(() => {
         if (showAddForm && dialog) {
             dialog.showModal();
+            const nameElement: HTMLInputElement | null = document.querySelector("dialog input[type='text'][name='name']");
+            if (nameElement) {
+                nameElement.focus();
+            }
+            const friendlyRadioElement: HTMLInputElement | null = document.querySelector("dialog input[type='radio'][value='friendly']");
+            if (friendlyRadioElement) {
+                friendlyRadioElement.click();
+            }
         } else {
             dialog?.close()
         }
