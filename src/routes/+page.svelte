@@ -10,81 +10,106 @@
     import type { IAddFormOnSubmitData } from "$lib/add_form.svelte";
     import type { IEditFormOnLevelDecreaseData, IEditFormOnLevelIncreaseData } from "$lib/edit_form.svelte";
 
-    let creatures = $state<ICreature[]>([]);
-    let round = $state<number>(1);
+    let currentRoundState = $state<ICreature[]>([]);
+    let nextRoundState = $state<ICreature[]>([]);
+    let allCreatures = $derived(currentRoundState.concat(nextRoundState));
+    let currentRound = $state<number>(1);
     let showAddForm = $state<boolean>(false);
     let showEditForm = $state<boolean>(false);
     let editingCreature = $state<ICreature|undefined>(undefined);
 
     if (browser) {
-        let creaturesLocal = localStorage.getItem("creatures");
-        let roundLocal = localStorage.getItem("round");
+        let currentRoundStateLocal = localStorage.getItem("currentRoundState");
+        let nextRoundStateLocal = localStorage.getItem("nextRoundState");
+        let currentRoundLocal = localStorage.getItem("currentRound");
 
-        creatures = creaturesLocal ? JSON.parse(creaturesLocal) : [];
-        round = roundLocal ? parseInt(roundLocal) : 1;
+        currentRound = currentRoundLocal ? parseInt(currentRoundLocal) : 0;
+        currentRoundState = currentRoundStateLocal ? JSON.parse(currentRoundStateLocal) : [];
+        nextRoundState = nextRoundStateLocal ? JSON.parse(nextRoundStateLocal) : [];
     }
     $effect(() => {
         if (browser) {
-            localStorage.setItem("creatures", JSON.stringify(creatures));
-            localStorage.setItem("round", round.toString());
+            localStorage.setItem("currentRoundState", JSON.stringify(currentRoundState));
+            localStorage.setItem("nextRoundState", JSON.stringify(nextRoundState));
+            localStorage.setItem("currentRound", currentRound.toString());
         }
     });
 
-    function handleDndConsider(e: CustomEvent) {
-        creatures = e.detail.items;
-    }
-    function handleDndFinalize(e: CustomEvent) {
-        // Update the initiative order when drag and dropped
-        creatures = e.detail.items.map((item: ICreature, index: number) => {
-            item.order = index + 1;
+    function calculateOrder(current: ICreature[], next: ICreature[]) {
+        let nextRoundMaxOrder = 0;
+        if (next.length > 0) {
+            nextRoundState = next.map((item, index) => {
+                item.order = index + 1;
+                return item;
+            })
+            nextRoundMaxOrder = Math.max(...nextRoundState.map(creature => creature.order));
+        }
+        currentRoundState = current.map((item, index) => {
+            item.order = nextRoundMaxOrder + index + 1;
             return item;
-        })
+        });
+    }
+    function handleDndCurrent(e: CustomEvent) {
+        calculateOrder(e.detail.items, nextRoundState);
+    }
+    function handleDndNext(e: CustomEvent) {
+        calculateOrder(currentRoundState, e.detail.items);
     }
     function handleClickPrevious() {
-        if (creatures.length === 0) {
+        if (currentRoundState.length === 0) {
             return;
         }
-        let creature = creatures.pop();
-        if (creature) {
-            creatures.unshift(creature);
+        // Prevent going past round 1 if all creatures are in the currentRoundState
+        if (nextRoundState.length === 0 && currentRoundState.length > 0 && currentRound === 1) {
+            return;
         }
 
-        // If we're back to the max order, decrease the round
-        let maxOrder: number = Math.max(...creatures.map(creature => creature.order));
-        if (creatures.length > 0 && creatures[0].order === maxOrder) {
-            round -= 1;
+        // If the current round is full, move them to the next round
+        if (nextRoundState.length === 0 && currentRoundState.length > 0) {
+            nextRoundState = currentRoundState;
+            currentRoundState = [];
+            currentRound -= 1;
+        }
+
+        // Move creature from next round to this round start
+        if (nextRoundState.length > 0) {
+            let creature = nextRoundState.pop();
+            if (creature) {
+                currentRoundState.unshift(creature);
+            }
         }
     }
     function handleClickNext() {
-        if (creatures.length === 0) {
+        if (currentRoundState.length === 0) {
             return;
         }
-        let creature = creatures.splice(0, 1)[0];
-        creatures.push(creature);
+        let creature = currentRoundState.splice(0, 1)[0];
+        nextRoundState.push(creature);
 
-        // If we're back to order 1, increase the round
-        let minOrder: number = Math.min(...creatures.map(creature => creature.order));
-        if (creatures.length > 0 && creatures[0].order === minOrder) {
-            round += 1;
+        // If currentRound is empty, move to the next round
+        if (currentRoundState.length === 0 && nextRoundState.length > 0) {
+            currentRoundState = nextRoundState;
+            nextRoundState = [];
+            currentRound += 1;
         }
     }
     function handleAddFormSubmit(data: IAddFormOnSubmitData) {
         showAddForm = false;
 
-        if ( creatures.some(creature => creature.name === data.name) ) {
+        if ( allCreatures.some(creature => creature.name === data.name) ) {
             alert(`Creature with name "${data.name}" already exists!`)
             return;
         }
         let nextId = 1;
         let nextOrder = 1;
 
-        if (creatures.length > 0) {
-            nextId = Math.max(...creatures.map(creature => creature.id)) + 1;
+        if (allCreatures.length > 0) {
+            nextId = Math.max(...allCreatures.map(creature => creature.id)) + 1;
         }
-        if (creatures.length > 0) {
-            nextOrder = Math.max(...creatures.map(creature => creature.order)) + 1;
+        if (allCreatures.length > 0) {
+            nextOrder = Math.max(...allCreatures.map(creature => creature.order)) + 1;
         }
-        creatures.push({
+        currentRoundState.push({
             id: nextId,
             name: data.name.trim(),
             order: nextOrder,
@@ -94,7 +119,7 @@
         })
     }
     function handleClickEdit(data: ICreatureOnEditClickData) {
-        editingCreature = creatures.find((creature) => creature.name === data.name);
+        editingCreature = allCreatures.find((creature) => creature.name === data.name);
         if (editingCreature) {
             showEditForm = true;
         }
@@ -105,15 +130,25 @@
         }
     }
     function handleDeleteClick(id: number) {
-        creatures = creatures
+        nextRoundState = nextRoundState
             .filter((creature) => creature.id !== id)
             .map((item, index) => {
                 item.order = index + 1;
                 return item;
             })
+        let nextRoundMaxOrder = 0;
+        if (nextRoundState.length > 0) {
+            nextRoundMaxOrder = Math.max(...nextRoundState.map(creature => creature.order));
+        }
+        currentRoundState = currentRoundState
+            .filter((creature) => creature.id !== id)
+            .map((item, index) => {
+                item.order = nextRoundMaxOrder + index + 1;
+                return item;
+            });
     }
     function handleKillClick(id: number) {
-        let targetCreature = creatures.find((creature) => creature.id === id);
+        let targetCreature = allCreatures.find((creature) => creature.id === id);
         if (targetCreature) {
             targetCreature.isDead = ! targetCreature.isDead;
         }
@@ -172,26 +207,27 @@
     <h1>Combat Tracker</h1>
     <div class="header-right">
         <button onclick={() => (showAddForm = true)}>Add</button>
-        <button onclick={() => {creatures = []; round = 1;}}>Clear</button>
+        <button onclick={() => {currentRoundState = []; nextRoundState = []; currentRound = 1;}}>Clear</button>
     </div>
 </header>
 
 <div class="toolbar">
     <button onclick={handleClickPrevious}><ChevronsLeftIcon size="32"/></button>
-    <span>Round {round}</span>
+    <span>Round {currentRound}</span>
     <button onclick={handleClickNext}><ChevronsRightIcon size="32"/></button>
 </div>
 
 <div
     class="initiative-list"
     use:dragHandleZone={{
-        items: creatures,
-        dropTargetStyle: { outline: 'none'}
+        items: currentRoundState,
+        dropTargetStyle: { outline: 'none'},
+        type: "currentRound"
     }}
-    onconsider="{handleDndConsider}"
-    onfinalize="{handleDndFinalize}"
+    onconsider="{handleDndCurrent}"
+    onfinalize="{handleDndCurrent}"
 >
-    {#each creatures as creature (creature.id)}
+    {#each currentRoundState as creature (creature.id)}
     <div
         class="creature-wrapper {creature.isDead ? 'creature-dead': ''} creature-team-{creature.team}"
         animate:flip="{{duration: 200}}"
@@ -199,7 +235,52 @@
         <div class="creature-drag-handle" use:dragHandle >
             <span><MenuIcon /></span>
         </div>
-        <Creature name={creature.name} order={creature.order} isDead={creature.isDead} team={creature.team} conditions={creature.conditions} onEditClick={handleClickEdit} />
+        <Creature
+            name={creature.name}
+            order={creature.order}
+            isDead={creature.isDead}
+            team={creature.team}
+            conditions={creature.conditions}
+            onEditClick={handleClickEdit}
+        />
+        <button class="creature-kill" onclick={() => handleKillClick(creature.id)} data-id={creature.id}>
+            <span><FrownIcon /></span>
+        </button>
+        <button class="creature-delete" onclick={() => handleDeleteClick(creature.id)} data-id={creature.id}>
+            <span><XIcon /></span>
+        </button>
+    </div>
+    {/each}
+</div>
+{#if nextRoundState.length > 0 }
+<div class="new-round-divider">Round {currentRound + 1}</div>
+{/if}
+<div
+    class="initiative-list"
+    use:dragHandleZone={{
+        items: nextRoundState,
+        dropTargetStyle: { outline: 'none'},
+        type: "nextRound"
+    }}
+    onconsider="{handleDndNext}"
+    onfinalize="{handleDndNext}"
+>
+    {#each nextRoundState as creature (creature.id)}
+    <div
+        class="creature-wrapper {creature.isDead ? 'creature-dead': ''} creature-team-{creature.team}"
+        animate:flip="{{duration: 200}}"
+    >
+        <div class="creature-drag-handle" use:dragHandle >
+            <span><MenuIcon /></span>
+        </div>
+        <Creature
+            name={creature.name}
+            order={creature.order}
+            isDead={creature.isDead}
+            team={creature.team}
+            conditions={creature.conditions}
+            onEditClick={handleClickEdit}
+        />
 
         <button class="creature-kill" onclick={() => handleKillClick(creature.id)} data-id={creature.id}>
             <span><FrownIcon /></span>
@@ -207,9 +288,6 @@
         <button class="creature-delete" onclick={() => handleDeleteClick(creature.id)} data-id={creature.id}>
             <span><XIcon /></span>
         </button>
-        {#if creature.order === Math.max(...creatures.map(creature => creature.order)) }
-        <div class="new-round-divider">Round {round + 1}</div>
-        {/if}
     </div>
     {/each}
 </div>
@@ -298,7 +376,7 @@
     .initiative-list {
         display: flex;
         flex-flow: column;
-        gap: 8px;
+        gap: .4rem;
         margin: 0rem .4rem;
     }
     .creature-wrapper {
