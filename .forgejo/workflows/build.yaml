@@ -1,0 +1,68 @@
+# https://gitea.internal.alaeron.com/alaeron/infra-config/actions
+name: CI/CD Pipeline
+run-name: ${{ forge.actor }} updated master branch.
+on:
+  push:
+    branches:
+      - master
+
+env:
+  IMAGE_URI: gitea.internal.alaeron.com/alaeron/pf2e-combat-tracker
+  # TRIVY_DISABLE_VEX_NOTICE: "1"
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/catthehacker/ubuntu:act-latest
+
+    steps:
+      - name: Check out repository
+        uses: https://code.forgejo.org/actions/checkout@v4
+
+      - name: Login to container registry
+        uses: https://code.forgejo.org/docker/login-action@v2
+        with:
+          registry: gitea.internal.alaeron.com
+          username: ${{ secrets.DOCKER_REG_USERNAME }}
+          password: ${{ secrets.DOCKER_REG_TOKEN }}
+
+      - name: "Build image: prod"
+        uses: https://code.forgejo.org/docker/build-push-action@v4
+        with:
+          network: host
+          push: true
+          cache-from: type=registry,ref=${{ env.IMAGE_URI }}:latest
+          cache-to: type=inline
+          context: .
+          target: prod
+          tags: ${{ env.IMAGE_URI }}:${{ forge.run_number }},${{ env.IMAGE_URI }}:latest
+
+      #- name: "Build image: dev"
+      #  uses: https://code.forgejo.org/docker/build-push-action@v4
+      #  with:
+      #    network: host
+      #    push: true
+      #    cache-from: type=registry,ref=${{ env.IMAGE_URI }}:latest
+      #    cache-to: type=inline
+      #    context: .
+      #    target: dev
+      #    tags: ${{ env.IMAGE_URI }}:dev-${{ forge.run_number }},${{ env.IMAGE_URI }}:dev-latest
+
+      - name: Scan image
+        uses: https://github.com/aquasecurity/trivy-action@0.35.0
+        continue-on-error: true
+        with:
+          image-ref: ${{ env.IMAGE_URI }}:latest
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: os,library
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH
+          token-setup-trivy: ${{ secrets.REAL_GITHUB_TOKEN }}
+
+      - name: Job status
+        run: |
+          echo "Successfully built and pushed ${{ env.IMAGE_URI }}:${{ forge.run_number }}."
