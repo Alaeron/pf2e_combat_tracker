@@ -39,7 +39,8 @@
     <form onsubmit={handleSubmit}>
         <fieldset>
             <label for="name">Name</label>
-            <input name="name" type="text" bind:value={name}/>
+            <!-- svelte-ignore a11y_autofocus -->
+            <input name="name" type="text" bind:value={name} autofocus/>
         </fieldset>
 
         <fieldset>
@@ -49,7 +50,7 @@
             </div>
             <div>
                 <label for="friendly">Friendly</label>
-                <input id="friendly" name="team" type="radio" value="friendly" bind:group={team}/>
+                <input id="friendly" name="team" type="radio" value="friendly" bind:group={team} checked/>
             </div>
             <div>
                 <label for="neutral">Neutral</label>
