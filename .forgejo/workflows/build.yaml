@@ -8,6 +8,7 @@ on:
 
 env:
   IMAGE_URI: gitea.internal.alaeron.com/alaeron/pf2e-combat-tracker
+  IMAGE_BASE_VERSION: v0.0
   # TRIVY_DISABLE_VEX_NOTICE: "1"
 
 jobs:
@@ -37,7 +38,7 @@ jobs:
           cache-to: type=inline
           context: .
           target: prod
-          tags: ${{ env.IMAGE_URI }}:v0.0.${{ forge.run_number }},${{ env.IMAGE_URI }}:latest
+          tags: ${{ env.IMAGE_URI }}:${{ env.IMAGE_BASE_VERSION }}.${{ forge.run_number }},${{ env.IMAGE_URI }}:latest
 
       #- name: "Build image: dev"
       #  uses: https://code.forgejo.org/docker/build-push-action@v4
@@ -65,4 +66,4 @@ jobs:
 
       - name: Job status
         run: |
-          echo "Successfully built and pushed ${{ env.IMAGE_URI }}:${{ forge.run_number }}."
+          echo "Successfully built and pushed ${{ env.IMAGE_URI }}:${{ env.IMAGE_BASE_VERSION }}.${{ forge.run_number }}."
