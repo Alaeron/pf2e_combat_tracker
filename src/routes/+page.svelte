@@ -2,7 +2,7 @@
     import { flip } from "svelte/animate";
     import { browser } from "$app/environment";
     import { dragHandleZone, dragHandle } from "svelte-dnd-action";
-    import { ChevronsLeftIcon, ChevronsRightIcon, XIcon, FrownIcon, MenuIcon } from "svelte-feather-icons";
+    import { ChevronsLeftIcon, ChevronsRightIcon, XIcon, FrownIcon, MenuIcon, PlusIcon, RotateCcwIcon, UploadIcon, DownloadIcon } from "svelte-feather-icons";
 	import Creature from '$lib/creature.svelte';
     import AddForm from "$lib/add_form.svelte";
     import EditForm from "$lib/edit_form.svelte";
@@ -201,20 +201,70 @@
                 break;
         }
     }
+    function handleDownloadClick() {
+        let exportData = {
+            currentRoundState: $state.snapshot(currentRoundState),
+            nextRoundState: $state.snapshot(nextRoundState),
+            currentRound: $state.snapshot(currentRound)
+        }
+        // TODO: Better date formatting
+        let date = new Date();
+        let timestamp = `${date.getFullYear()}${date.getMonth()}${date.getDay()}_${date.getHours()}${date.getMinutes()}${date.getSeconds()}`
+
+        let hiddenElement = document.createElement('a');
+        hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(exportData));
+        hiddenElement.target = '_blank';
+        hiddenElement.download = `combat_${timestamp}.json`;
+        hiddenElement.click();
+        hiddenElement.remove();
+    }
+    function handleUploadClick() {
+        let uploadElement: HTMLInputElement | null = document.querySelector("#upload-combat");
+        if (uploadElement) {
+            uploadElement.click();
+        }
+    }
+    function handleUploadChanged(e: Event & { currentTarget: EventTarget & HTMLInputElement}) {
+        if (!e.currentTarget) {
+            return;
+        }
+        const uploadElement = e.currentTarget;
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            if (e.target && e.target.result) {
+                let importDataJson = e.target.result.toString();
+                let importData = JSON.parse(importDataJson);
+
+                currentRound = importData.currentRound ?? 1;
+                currentRoundState = importData.currentRoundState ?? [];
+                nextRoundState = importData.nextRoundState ?? [];
+            }
+        }
+
+        if (uploadElement.files && uploadElement.files.length > 0) {
+            for (let file of uploadElement.files) {
+                reader.readAsText(file);
+            }
+        }
+    }
 </script>
 
 <header>
     <h1>Combat Tracker</h1>
     <div class="header-right">
-        <button onclick={() => (showAddForm = true)}>Add</button>
-        <button onclick={() => {currentRoundState = []; nextRoundState = []; currentRound = 1;}}>Clear</button>
+        <button title="Add" onclick={() => (showAddForm = true)}><PlusIcon /></button>
+        <input id="upload-combat" title="Upload Combat" type="file" accept="application/json" style="display: none" onchange={handleUploadChanged}/>
+        <button title="Upload Combat" onclick={handleUploadClick}><UploadIcon /></button>
+        <button title="Download Combat" onclick={handleDownloadClick}><DownloadIcon /></button>
+        <button title="Reset Combat" onclick={() => {currentRoundState = []; nextRoundState = []; currentRound = 1;}}><RotateCcwIcon /></button>
     </div>
 </header>
 
 <div class="toolbar">
-    <button onclick={handleClickPrevious}><ChevronsLeftIcon size="32"/></button>
+    <button title="Previous Turn" onclick={handleClickPrevious}><ChevronsLeftIcon size="32"/></button>
     <span>Round {currentRound}</span>
-    <button onclick={handleClickNext}><ChevronsRightIcon size="32"/></button>
+    <button title="Next Turn" onclick={handleClickNext}><ChevronsRightIcon size="32"/></button>
 </div>
 
 <div
@@ -243,10 +293,10 @@
             conditions={creature.conditions}
             onEditClick={handleClickEdit}
         />
-        <button class="creature-kill" onclick={() => handleKillClick(creature.id)} data-id={creature.id}>
+        <button class="creature-kill" title="Toggle Dead" onclick={() => handleKillClick(creature.id)} data-id={creature.id}>
             <span><FrownIcon /></span>
         </button>
-        <button class="creature-delete" onclick={() => handleDeleteClick(creature.id)} data-id={creature.id}>
+        <button class="creature-delete" title="Remove" onclick={() => handleDeleteClick(creature.id)} data-id={creature.id}>
             <span><XIcon /></span>
         </button>
     </div>
@@ -331,9 +381,13 @@
             border: none;
             font-size: 1rem;
             color: #f0ede2;
-            padding: 1rem;
+            padding: .8rem;
             background-color: #505050;
-            width: 4.5rem;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             &:hover {
                 background-color: #606060;
