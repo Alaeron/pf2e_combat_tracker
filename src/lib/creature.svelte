@@ -51,7 +51,7 @@
         background-color: #404040;
         font-size: 18px;
         padding: .8rem 1rem .8rem 0.1rem;
-        transition: 0.3s;
+        transition: 0.2s;
     }
     .creature-team-friendly {
         background-color: #303070;

@@ -446,6 +446,7 @@
             display: flex;
             align-items: center;
             color: #8f8f8f;
+            transition: 0.2s;
         }
     }
     .creature-team-friendly .creature-drag-handle,
@@ -477,6 +478,7 @@
         padding: 0rem 0rem 0rem 0rem;
         border: none;
         color: #f0ede2;
+        transition: 0.2s;
 
         &:hover {
             background-color: #802020;
