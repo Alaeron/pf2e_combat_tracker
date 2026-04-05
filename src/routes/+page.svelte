@@ -4,6 +4,7 @@
 	import Creature from '$lib/creature.svelte';
     import AddForm from "$lib/add_form.svelte";
     import EditForm from "$lib/edit_form.svelte";
+    import { ChevronsLeftIcon, ChevronsRightIcon, XIcon, FrownIcon, MenuIcon } from "svelte-feather-icons";
     import type { ICreature, ICreatureOnEditClickData } from "$lib/creature.svelte";
     import type { IAddFormOnSubmitData } from "$lib/add_form.svelte";
     import type { IEditFormOnLevelDecreaseData, IEditFormOnLevelIncreaseData } from "$lib/edit_form.svelte";
@@ -161,9 +162,9 @@
 </header>
 
 <div class="toolbar">
-    <button onclick={handleClickPrevious}>🡐</button>
+    <button onclick={handleClickPrevious}><ChevronsLeftIcon size="32"/></button>
     <span>Round {round}</span>
-    <button onclick={handleClickNext}>🡒</button>
+    <button onclick={handleClickNext}><ChevronsRightIcon size="32"/></button>
 </div>
 
 <div
@@ -181,15 +182,15 @@
         animate:flip="{{duration: 200}}"
     >
         <div class="creature-drag-handle" use:dragHandle >
-            <span>≡</span>
+            <span><MenuIcon /></span>
         </div>
         <Creature name={creature.name} order={creature.order} isDead={creature.isDead} team={creature.team} conditions={creature.conditions} onEditClick={handleClickEdit} />
 
         <button class="creature-kill" onclick={() => handleKillClick(creature.id)} data-id={creature.id}>
-            <span>💀</span>
+            <span><FrownIcon /></span>
         </button>
         <button class="creature-delete" onclick={() => handleDeleteClick(creature.id)} data-id={creature.id}>
-            <span>🗙</span>
+            <span><XIcon /></span>
         </button>
         {#if creature.order === Math.max(...creatures.map(creature => creature.order)) }
         <div class="new-round-divider">Round {round + 1}</div>
@@ -259,15 +260,16 @@
         padding: .4rem;
 
         & button {
-            width: 10%;
-            min-width: 50px;
-            max-width: 100px;
+            min-width: 4rem;
             font-size: 2.2rem;
             background-color: #505050;
             border: none;
             border-radius: 0px;
-            max-height: 50px;
+            height: 2.5rem;
             color: #f0ede2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             &:hover {
                 background-color: #606060;
@@ -293,7 +295,7 @@
             background-color: #404040;
             font-size: 2rem;
             width: 2rem;
-            padding: 0rem 0rem .5rem 0.2rem;
+            padding: 0rem 0rem .3rem 0.2rem;
             display: flex;
             align-items: center;
             color: #8f8f8f;
@@ -325,7 +327,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 0rem 0rem 0.2rem 0rem;
+        padding: 0rem 0rem 0rem 0rem;
         border: none;
         color: #f0ede2;
 

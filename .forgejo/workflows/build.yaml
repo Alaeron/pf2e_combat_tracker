@@ -37,7 +37,7 @@ jobs:
           cache-to: type=inline
           context: .
           target: prod
-          tags: ${{ env.IMAGE_URI }}:${{ forge.run_number }},${{ env.IMAGE_URI }}:latest
+          tags: ${{ env.IMAGE_URI }}:v0.0.${{ forge.run_number }},${{ env.IMAGE_URI }}:latest
 
       #- name: "Build image: dev"
       #  uses: https://code.forgejo.org/docker/build-push-action@v4
