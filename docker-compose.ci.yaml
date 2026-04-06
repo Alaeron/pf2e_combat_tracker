@@ -1,0 +1,6 @@
+services:
+  app:
+    image: ${IMAGE_URI}:${IMAGE_BASE_VERSION}.${FORGEJO_RUN_NUMBER}
+    build:
+      context: .
+      target: dev
