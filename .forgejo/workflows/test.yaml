@@ -43,7 +43,7 @@ jobs:
           vuln-type: os,library
           scanners: vuln,secret
           severity: CRITICAL,HIGH
-          token-setup-trivy: ${{ secrets.REAL_GITHUB_TOKEN }}
+          token-setup-trivy: ${{ secrets.PUBLIC_RO_GITHUB_ACCESS_TOKEN }}
 
       - name: "Test: a11y"
         run: |
