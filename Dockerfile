@@ -12,8 +12,8 @@ COPY static/ static/
 COPY package.json package-lock.json vite.config.ts svelte.config.js tsconfig.json /app/
 
 RUN npm run build && \
-   npm prune --production && \
-   find build -name "*.map" -delete
+    npm prune --production && \
+    find build -name "*.map" -delete
 
 # ========== PROD ==========
 FROM node:24-alpine@sha256:01743339035a5c3c11a373cd7c83aeab6ed1457b55da6a69e014a95ac4e4700b AS prod
