@@ -10,6 +10,7 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"check:a11y": "pa11y-ci",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write ."
 	},
@@ -25,6 +26,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.15.2",
 		"globals": "^17.4.0",
+		"pa11y-ci": "^4.1.0",
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.4.1",
 		"svelte": "^5.54.0",

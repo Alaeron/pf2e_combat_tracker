@@ -1,0 +1,5 @@
+{
+    "urls": [
+        "http://host.docker.internal:5173/"
+    ]
+}

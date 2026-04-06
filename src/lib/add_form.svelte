@@ -46,30 +46,29 @@
     onclick={(e) => { if (e.target === dialog) dialog.close(); }}
 >
     <form onsubmit={handleSubmit}>
-        <fieldset>
+        <div class="add-form-row">
             <label for="name">Name</label>
-            <!-- svelte-ignore a11y_autofocus -->
-            <input name="name" type="text" bind:value={name} autofocus/>
-        </fieldset>
+            <input name="name" type="text" title="Name" bind:value={name}/>
+        </div>
 
-        <fieldset>
+        <div class="add-form-row">
             <div>
                 <label for="environment">Environment</label>
-                <input id="environment" name="team" type="radio" value="environment" bind:group={team}/>
+                <input id="environment" name="team" type="radio" title="Environment" value="environment" bind:group={team}/>
             </div>
             <div>
                 <label for="friendly">Friendly</label>
-                <input id="friendly" name="team" type="radio" value="friendly" bind:group={team} checked/>
+                <input id="friendly" name="team" type="radio" title="Friendly" value="friendly" bind:group={team} checked/>
             </div>
             <div>
                 <label for="neutral">Neutral</label>
-                <input id="neutral" name="team" type="radio" value="neutral" bind:group={team}/>
+                <input id="neutral" name="team" type="radio" title="Neutral" value="neutral" bind:group={team}/>
             </div>
             <div>
                 <label for="hostile">Hostile</label>
-                <input id="hostile" name="team" type="radio" value="hostile" bind:group={team}/>
+                <input id="hostile" name="team" type="radio" title="Hostile" value="hostile" bind:group={team}/>
             </div>
-        </fieldset>
+        </div>
         <input type="submit" value="Add"/>
     </form>
 </dialog>
@@ -93,7 +92,7 @@
         align-items: center;
         font-size: 1.2rem;
     }
-    fieldset {
+    .add-form-row {
         border: none;
         display: flex;
         flex-flow: column;
