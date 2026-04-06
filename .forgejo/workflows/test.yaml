@@ -1,5 +1,5 @@
 # https://gitea.internal.alaeron.com/alaeron/infra-config/actions
-name: CI/CD Pipeline
+name: tests
 run-name: ${{ forge.actor }} opened pull request.
 on:
   pull_request:
@@ -14,8 +14,7 @@ env:
   # TRIVY_DISABLE_VEX_NOTICE: "1"
 
 jobs:
-  test:
-    name: "Test"
+  build:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/catthehacker/ubuntu:act-latest
@@ -31,7 +30,13 @@ jobs:
       - name: "Run image"
         run: |
           docker compose -f docker-compose.ci.yaml up -d
-
+  scan:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/catthehacker/ubuntu:act-latest
+    needs:
+      - build
+    steps:
       - name: Scan image
         uses: https://github.com/aquasecurity/trivy-action@0.35.0
         continue-on-error: true
@@ -45,12 +50,28 @@ jobs:
           severity: CRITICAL,HIGH
           token-setup-trivy: ${{ secrets.PUBLIC_RO_GITHUB_ACCESS_TOKEN }}
 
+  a11y:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/catthehacker/ubuntu:act-latest
+    needs:
+      - build
+    steps:
       - name: "Test: a11y"
         run: |
           docker compose -f docker-compose.ci.yaml exec app npm run check:a11y
 
+  post:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/catthehacker/ubuntu:act-latest
+    needs:
+      - build
+      - scan
+      - a11y
+    if: ${{ always() }}
+    steps:
       - name: "Cleanup"
-        if: always()
         run: |
           docker compose -f docker-compose.ci.yaml down --remove-orphans
 
