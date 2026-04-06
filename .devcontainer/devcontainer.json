@@ -37,7 +37,7 @@
 	"workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind",
 	"mounts": [
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh/id_rsa.pub,target=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh/id_rsa.pub,type=bind,consistency=cached",
-		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.config/git/allowed_signers,target=${localEnv:HOME}${localEnv:USERPROFILE}/.config/git/allowed_signers,type=bind,consistency=cached",
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.config/git/allowed_signers,target=${localEnv:HOME}${localEnv:USERPROFILE}/.config/git/allowed_signers,type=bind,consistency=cached"
 	],
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
