@@ -73,8 +73,7 @@
         text-align: center;
     }
     .name {
-        text-wrap: nowrap;
-        flex-basis: 10rem;
+        flex-basis: 15rem;
     }
     .conditions {
         display: flex;
@@ -83,6 +82,7 @@
         position: relative;
         height: 100%;
         width: 100%;
+        align-items: center;
     }
     .edit-overlay {
         display: none;

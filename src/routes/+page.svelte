@@ -364,7 +364,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem;
+        padding: .4rem;
 
         & h1 {
             margin: 0px;
@@ -383,8 +383,8 @@
             color: #f0ede2;
             padding: .8rem;
             background-color: #505050;
-            width: 3rem;
-            height: 3rem;
+            flex-basis: 3rem;
+            flex-shrink: 1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -405,6 +405,9 @@
         align-items: center;
         font-size: 1.5rem;
         padding: .4rem;
+        min-width: calc(360px - .8rem);
+        max-width: min(1200px, 100vw);
+        margin: auto;
 
         & button {
             min-width: 4rem;
@@ -431,7 +434,10 @@
         display: flex;
         flex-flow: column;
         gap: .4rem;
-        margin: 0rem .4rem;
+        min-width: calc(360px - .8rem);
+        max-width: min(1200px, 100vw);
+        margin: auto;
+        padding: 0rem .4rem .4rem .4rem;
     }
     .creature-wrapper {
         display: grid;
