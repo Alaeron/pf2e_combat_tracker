@@ -18,7 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/catthehacker/ubuntu:act-latest
-
+    outputs:
+      RUNNER: ${{ runner.name }}
     steps:
       - name: Check out repository
         uses: https://code.forgejo.org/actions/checkout@v4
@@ -31,7 +32,7 @@ jobs:
         run: |
           docker compose -f docker-compose.ci.yaml up -d
   scan:
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.build.outputs.RUNNER }}
     container:
       image: ghcr.io/catthehacker/ubuntu:act-latest
     needs:
@@ -51,7 +52,7 @@ jobs:
           token-setup-trivy: ${{ secrets.PUBLIC_RO_GITHUB_ACCESS_TOKEN }}
 
   a11y:
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.build.outputs.RUNNER }}
     container:
       image: ghcr.io/catthehacker/ubuntu:act-latest
     needs:
@@ -62,7 +63,7 @@ jobs:
           docker compose -f docker-compose.ci.yaml exec app npm run check:a11y
 
   post:
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.build.outputs.RUNNER }}
     container:
       image: ghcr.io/catthehacker/ubuntu:act-latest
     needs:
