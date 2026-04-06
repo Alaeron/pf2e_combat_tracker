@@ -23,7 +23,7 @@ jobs:
         uses: https://code.forgejo.org/actions/checkout@v4
 
       - name: Login to container registry
-        uses: https://code.forgejo.org/docker/login-action@v2
+        uses: https://code.forgejo.org/docker/login-action@v4
         with:
           registry: gitea.internal.alaeron.com
           username: ${{ secrets.DOCKER_REG_USERNAME }}
