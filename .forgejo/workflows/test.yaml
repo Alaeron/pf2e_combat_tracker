@@ -26,11 +26,11 @@ jobs:
 
       - name: "Build image: dev"
         run: |
-          docker compose build
+          docker compose -f docker-compose.ci.yaml build
 
       - name: "Run image"
         run: |
-          docker compose up -d
+          docker compose -f docker-compose.ci.yaml up -d
 
       - name: Scan image
         uses: https://github.com/aquasecurity/trivy-action@0.35.0
@@ -47,12 +47,12 @@ jobs:
 
       - name: "Test: a11y"
         run: |
-          docker compose exec app npm run check:a11y
+          docker compose -f docker-compose.ci.yaml exec app npm run check:a11y
 
       - name: "Cleanup"
         if: always()
         run: |
-          docker compose down --remove-orphans
+          docker compose -f docker-compose.ci.yaml down --remove-orphans
 
       - name: Job status
         run: |
