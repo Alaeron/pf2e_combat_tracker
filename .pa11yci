@@ -1,5 +1,13 @@
 {
+    "standard": "WCAG2AAA",
+    "defaults": {
+        "chromeLaunchConfig": {
+            "args": [
+                "--no-sandbox"
+            ]
+        }
+    },
     "urls": [
-        "http://host.docker.internal:5173/"
+        "http://localhost:5173/"
     ]
 }

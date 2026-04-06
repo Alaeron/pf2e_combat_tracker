@@ -2,10 +2,15 @@
 FROM node:24-alpine@sha256:01743339035a5c3c11a373cd7c83aeab6ed1457b55da6a69e014a95ac4e4700b AS builder
 
 WORKDIR /app
+
 RUN --mount=type=bind,source=./package.json,target=./package.json \
     --mount=type=bind,source=./package-lock.json,target=./package-lock.json \
     npm ci
-COPY . .
+
+COPY src/ src/
+COPY static/ static/
+COPY package.json package-lock.json vite.config.ts svelte.config.js tsconfig.json /app/
+
 RUN npm run build && \
     npm prune --production && \
     find build -name "*.map" -delete
@@ -71,9 +76,32 @@ RUN apt-get update && \
         xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
+RUN chown -R node:node /app
 EXPOSE 4173 5173
 USER node
 
 RUN npx puppeteer browsers install chrome
 
 CMD ["bash", "sleep", "infinity"]
+
+# ========== DEV ==========
+FROM local AS dev
+
+RUN --mount=type=bind,source=./package.json,target=./package.json \
+    --mount=type=bind,source=./package-lock.json,target=./package-lock.json \
+    npm ci
+
+COPY --chown=node:node src/ src/
+COPY --chown=node:node static/ static/
+COPY --chown=node:node \
+    package.json \
+    package-lock.json \
+    vite.config.ts \
+    svelte.config.js \
+    tsconfig.json \
+    .pa11yci \
+    .prettierignore \
+    eslint.config.js \
+    /app/
+
+CMD ["npm", "run", "dev"]

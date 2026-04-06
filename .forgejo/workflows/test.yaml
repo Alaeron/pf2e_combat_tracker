@@ -1,0 +1,59 @@
+# https://gitea.internal.alaeron.com/alaeron/infra-config/actions
+name: CI/CD Pipeline
+run-name: ${{ forge.actor }} opened pull request.
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+env:
+  IMAGE_URI: gitea.internal.alaeron.com/alaeron/pf2e-combat-tracker
+  IMAGE_BASE_VERSION: dev-v0.0
+  # TRIVY_DISABLE_VEX_NOTICE: "1"
+
+jobs:
+  test:
+    name: "Test"
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/catthehacker/ubuntu:act-latest
+
+    steps:
+      - name: Check out repository
+        uses: https://code.forgejo.org/actions/checkout@v4
+
+      - name: "Build image: dev"
+        run: |
+          docker compose -f docker-compose.ci.yaml build
+
+      - name: "Run image"
+        run: |
+          docker compose -f docker-compose.ci.yaml up -d
+
+      - name: Scan image
+        uses: https://github.com/aquasecurity/trivy-action@0.35.0
+        continue-on-error: true
+        with:
+          image-ref: ${{ env.IMAGE_URI }}:${{ env.IMAGE_BASE_VERSION }}.${{ forge.run_number }}
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: os,library
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH
+          token-setup-trivy: ${{ secrets.PUBLIC_RO_GITHUB_ACCESS_TOKEN }}
+
+      - name: "Test: a11y"
+        run: |
+          docker compose -f docker-compose.ci.yaml exec app npm run check:a11y
+
+      - name: "Cleanup"
+        if: always()
+        run: |
+          docker compose -f docker-compose.ci.yaml down --remove-orphans
+
+      - name: Job status
+        run: |
+          echo "Successfully ran all tests!"

@@ -1,9 +1,9 @@
 # Whitelist pattern for files needed in the docker build
-**
-!/src/**
-!/static/**
-!/package.json
-!/package-lock.json
-!/vite.config.ts
-!/svelte.config.js
-!/tsconfig.json
+# **
+# !/src/**
+# !/static/**
+# !/package.json
+# !/package-lock.json
+# !/vite.config.ts
+# !/svelte.config.js
+# !/tsconfig.json
