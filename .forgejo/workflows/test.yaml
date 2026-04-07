@@ -19,7 +19,7 @@ jobs:
     container:
       image: ghcr.io/catthehacker/ubuntu:act-latest
     outputs:
-      RUNNER: ${{ runner.name }}
+      RUNNER: gitea-${{ env.HOSTNAME }}
     steps:
       - name: Check out repository
         uses: https://code.forgejo.org/actions/checkout@v4
