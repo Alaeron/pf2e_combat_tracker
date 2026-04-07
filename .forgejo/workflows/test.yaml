@@ -1,5 +1,5 @@
 # https://gitea.internal.alaeron.com/alaeron/infra-config/actions
-name: CI/CD Pipeline
+name: ci
 run-name: ${{ forge.actor }} opened pull request.
 on:
   pull_request:
@@ -14,12 +14,12 @@ env:
   # TRIVY_DISABLE_VEX_NOTICE: "1"
 
 jobs:
-  test:
-    name: "Test"
+  tests:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/catthehacker/ubuntu:act-latest
-
+    outputs:
+      RUNNER: gitea-${{ env.HOSTNAME }}
     steps:
       - name: Check out repository
         uses: https://code.forgejo.org/actions/checkout@v4
@@ -50,7 +50,7 @@ jobs:
           docker compose -f docker-compose.ci.yaml exec app npm run check:a11y
 
       - name: "Cleanup"
-        if: always()
+        if: ${{ always() }}
         run: |
           docker compose -f docker-compose.ci.yaml down --remove-orphans
 
