@@ -28,6 +28,10 @@ jobs:
         run: |
           docker compose -f docker-compose.ci.yaml build
 
+      - name: "Debug"
+        run: |
+          env
+
       - name: "Run image"
         run: |
           docker compose -f docker-compose.ci.yaml up -d
