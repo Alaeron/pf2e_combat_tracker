@@ -437,17 +437,17 @@
         min-width: calc(360px - .8rem);
         max-width: min(1200px, 100vw);
         margin: auto;
-        padding: 0rem .4rem .4rem .4rem;
+        padding: .4rem;
     }
     .creature-wrapper {
         display: grid;
         grid-template-rows: auto;
-        grid-template-columns: 2rem 1fr 2rem 2rem;
+        grid-template-columns: 2rem 1fr 3rem 3rem;
 
         & .creature-drag-handle {
             background-color: #404040;
             font-size: 2rem;
-            width: 2rem;
+            width: 3rem;
             padding: 0rem 0rem .3rem 0.2rem;
             display: flex;
             align-items: center;
@@ -485,6 +485,7 @@
         border: none;
         color: #f0ede2;
         transition: 0.2s;
+        width: 3rem;
 
         &:hover {
             background-color: #802020;
