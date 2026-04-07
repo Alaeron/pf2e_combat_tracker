@@ -22,7 +22,7 @@ jobs:
       RUNNER: gitea-${{ env.HOSTNAME }}
     steps:
       - name: Check out repository
-        uses: https://code.forgejo.org/actions/checkout@v4
+        uses: https://code.forgejo.org/actions/checkout@v6
 
       - name: "Build image: dev"
         run: |
