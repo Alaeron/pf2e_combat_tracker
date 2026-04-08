@@ -36,7 +36,7 @@
     <span class="name">{name}</span>
     <div class="conditions" onclick={handleEditClick} onkeypress="{handleEditClick}" role="button" tabindex="0">
         {#each conditions as condition, index (index)}
-        <Condition name={condition.name} value={condition.value} autoGrow={false}/>
+        <Condition name={condition.name} value={condition.value} category={condition.category} autoGrow={false}/>
         {/each}
         <div class="edit-overlay"><span>click to edit</span></div>
     </div>

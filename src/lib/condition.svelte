@@ -1,19 +1,20 @@
 <script lang="ts">
     export interface ICondition {
         name: string,
-        value: number | null
+        value: number | null,
+        category: string
     }
     interface IConditionProps {
         name: string,
-        value: number | null
+        value: number | null,
+        category: string,
         autoGrow?: boolean
     }
-    let { name, value, autoGrow = true }: IConditionProps = $props();
-    let elementClass = $derived(name.toLowerCase().replace(/[^a-z]+/, "-"))
+    let { name, value, category, autoGrow = true }: IConditionProps = $props();
     let autoGrowClass = $derived(autoGrow ? "condition-grow": "")
 </script>
 
-<span class="condition {elementClass} {autoGrowClass}">{name} {value}</span>
+<span class="condition {category} {autoGrowClass}">{name} {value}</span>
 
 <style>
     .condition {
@@ -29,119 +30,28 @@
     .condition-grow {
         flex-grow: 1;
     }
-
-    /* degrees of detection */
-    .hidden,
-    .observed,
-    .undetected,
-    .unnoticed {
+    .detection {
         background-color: #2b2b91;
     }
-
-    /* death and dying */
-    .doomed,
-    .dying,
-    .unconscious,
-    .wounded {
+    .death {
         background-color: #000000;
     }
-    /* lowered abilities */
-    .clumsy,
-    .drained,
-    .enfeebled,
-    .sickened,
-    .slowed,
-    .fatigued,
-    .stupefied,
-    .off-guard {
+    .lowered {
         background-color: #7d2b91;
     }
-
-    /* senses */
-    .blinded,
-    .concealed,
-    .dazzled,
-    .deafened,
-    .invisible {
+    .senses {
         background-color: #918c47;
     }
-
-    /* mental */
-    .confused,
-    .controlled,
-    .frightened,
-    .fascinated,
-    .stunned,
-    .taunted {
+    .mental {
         background-color: #af5b55;
     }
-
-    /* movement */
-    .encumbered,
-    .fleeing,
-    .paralyzed,
-    .immobilized,
-    .petrified,
-    .prone,
-    .restrained,
-    .grabbed {
+    .movement {
         background-color: #ad7a3f;
     }
-
-    /* damage */
-    .persist-damage {
-        background-color: rgb(179, 31, 31);
+    .damage {
+        background-color: #b31f1f;
     }
-
-    /* buffed */
-    .quickened {
-        background-color: rgb(63, 155, 63);
+    .buff {
+        background-color: #3f9b3f;
     }
 </style>
-
-<!--
-Full List:
-
-Blinded
-Broken
-Clumsy
-Concealed
-Confused
-Controlled
-Dazzled
-Deafened
-Doomed
-Drained
-Dying
-Encumbered
-Enfeebled
-Fascinated
-Fatigued
-Fleeing
-Friendly
-Frightened
-Grabbed
-Helpful
-Hidden
-Hostile
-Immobilized
-Indifferent
-Invisible
-Observed
-Off-Guard
-Paralyzed
-Persistent Damage
-Petrified
-Prone
-Quickened
-Restrained
-Sickened
-Slowed
-Stunned
-Stupefied
-Unconscious
-Undetected
-Unfriendly
-Unnoticed
-Wounded
--->

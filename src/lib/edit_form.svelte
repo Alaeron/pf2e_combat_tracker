@@ -20,44 +20,54 @@
 
     let dialog = $state<HTMLDialogElement>();
 
-    let allConditions: { name: string, requires_value: boolean }[] = [
-        { name: "Blinded", requires_value: false },
-        { name: "Clumsy", requires_value: true },
-        { name: "Concealed", requires_value: false },
-        { name: "Confused", requires_value: false },
-        { name: "Controlled", requires_value: false },
-        { name: "Dazzled", requires_value: false },
-        { name: "Deafened", requires_value: false },
-        { name: "Doomed", requires_value: true },
-        { name: "Drained", requires_value: true },
-        { name: "Dying", requires_value: true },
-        { name: "Encumbered", requires_value: false },
-        { name: "Enfeebled", requires_value: true },
-        { name: "Fascinated", requires_value: false },
-        { name: "Fatigued", requires_value: false },
-        { name: "Fleeing", requires_value: false },
-        { name: "Frightened", requires_value: false },
-        { name: "Grabbed", requires_value: false },
-        { name: "Hidden", requires_value: false },
-        { name: "Immobilized", requires_value: false },
-        { name: "Invisible", requires_value: false },
-        { name: "Observed", requires_value: false },
-        { name: "Off-Guard", requires_value: false },
-        { name: "Paralyzed", requires_value: false },
-        { name: "Persist. Damage", requires_value: true },
-        { name: "Petrified", requires_value: false },
-        { name: "Prone", requires_value: false },
-        { name: "Quickened", requires_value: false },
-        { name: "Restrained", requires_value: false },
-        { name: "Sickened", requires_value: true },
-        { name: "Slowed", requires_value: true },
-        { name: "Stunned", requires_value: true },
-        { name: "Stupefied", requires_value: true },
-        { name: "Taunted", requires_value: false },
-        { name: "Unconscious", requires_value: false },
-        { name: "Undetected", requires_value: false },
-        { name: "Unnoticed", requires_value: false },
-        { name: "Wounded", requires_value: true }
+    let allConditions: { name: string, requires_value: boolean, category: string }[] = [
+        { name: "Blinded",             requires_value: false, category: "senses"    },
+        { name: "Clumsy",              requires_value: true,  category: "lowered"   },
+        { name: "Concealed",           requires_value: false, category: "senses"    },
+        { name: "Confused",            requires_value: false, category: "mental"    },
+        { name: "Controlled",          requires_value: false, category: "mental"    },
+        { name: "Dazzled",             requires_value: false, category: "senses"    },
+        { name: "Deafened",            requires_value: false, category: "senses"    },
+        { name: "Doomed",              requires_value: true,  category: "death"     },
+        { name: "Drained",             requires_value: true,  category: "lowered"   },
+        { name: "Dying",               requires_value: true,  category: "death"     },
+        { name: "Encumbered",          requires_value: false, category: "movement"  },
+        { name: "Enfeebled",           requires_value: true,  category: "lowered"   },
+        { name: "Fascinated",          requires_value: false, category: "mental"    },
+        { name: "Fatigued",            requires_value: false, category: "lowered"   },
+        { name: "Fleeing",             requires_value: false, category: "movement"  },
+        { name: "Frightened",          requires_value: false, category: "mental"    },
+        { name: "Grabbed",             requires_value: false, category: "movement"  },
+        { name: "Hidden",              requires_value: false, category: "detection" },
+        { name: "Immobilized",         requires_value: false, category: "senses"    },
+        { name: "Invisible",           requires_value: false, category: "movement"  },
+        { name: "Observed",            requires_value: false, category: "detection" },
+        { name: "Off-Guard",           requires_value: false, category: "lowered"   },
+        { name: "Paralyzed",           requires_value: false, category: "movement"  },
+        { name: "Persist. Damage",     requires_value: true,  category: "damage"    },
+        { name: "Petrified",           requires_value: false, category: "movement"  },
+        { name: "Prone",               requires_value: false, category: "movement"  },
+        { name: "Quickened",           requires_value: false, category: "buff"      },
+        { name: "Restrained",          requires_value: false, category: "movement"  },
+        { name: "Sickened",            requires_value: true,  category: "lowered"   },
+        { name: "Slowed",              requires_value: true,  category: "lowered"   },
+        { name: "Stunned",             requires_value: true,  category: "mental"    },
+        { name: "Stupefied",           requires_value: true,  category: "lowered"   },
+        { name: "Taunted",             requires_value: false, category: "mental"    },
+        { name: "Unconscious",         requires_value: false, category: "death"     },
+        { name: "Undetected",          requires_value: false, category: "detection" },
+        { name: "Unnoticed",           requires_value: false, category: "detection" },
+        { name: "Wounded",             requires_value: true,  category: "death"     },
+        { name: "Other Buff",          requires_value: true,  category: "buff"      },
+        { name: "Other Debuff",        requires_value: true,  category: "mental"    },
+        { name: "Duration",            requires_value: true,  category: "death"     },
+        { name: "Bravos Brew",         requires_value: true,  category: "buff"      },
+        { name: "Cat's Eye Elixir",    requires_value: true,  category: "buff"      },
+        { name: "Juggernaut Mutagen",  requires_value: true,  category: "buff"      },
+        { name: "Numbing Tonic",       requires_value: true,  category: "buff"      },
+        { name: "Quicksilver Mutagen", requires_value: true,  category: "buff"      },
+        { name: "Other Elixir",        requires_value: true,  category: "buff"      },
+        { name: "Other Mutagen",       requires_value: true,  category: "buff"      }
     ]
     let unselectedConditions = $derived.by(() => {
         if (!creature?.conditions) {
@@ -83,16 +93,20 @@
         e.preventDefault();
         if (!creature) return;
 
+        let newCondition = allConditions.find((condition) => condition.name === e.currentTarget.innerText )
         let newValue: number | null = null;
+        let newCategory: string = "other";
 
-        if (allConditions.find((condition) => {
-            return condition.name === e.currentTarget.innerText
-        })?.requires_value) {
+        if (newCondition?.requires_value) {
             newValue = 1;
+        }
+        if (newCondition?.category) {
+            newCategory = newCondition.category;
         }
         creature.conditions.push({
             name: e.currentTarget.innerText,
-            value: newValue
+            value: newValue,
+            category: newCategory
         });
         creature.conditions = creature.conditions.sort((a, b) => a.name.localeCompare(b.name));
     }
@@ -154,7 +168,7 @@
                 <div class="all-conditions-list">
                     {#each unselectedConditions as condition (condition.name)}
                     <div class="condition-wrapper" onclick="{handleUnselectedClick}" onkeypress={handleUnselectedClick} role="button" tabindex="0">
-                        <Condition name={condition.name}  value={null} />
+                        <Condition name={condition.name}  value={null} category={allConditions.find((c) => condition.name == c.name)?.category ?? "other"}/>
                     </div>
                     {/each}
                 </div>
@@ -170,7 +184,7 @@
                     {#each creature.conditions as condition (condition.name)}
                     <div class="condition-row">
                         <div class="condition-wrapper" onclick="{handleSelectedClick}" onkeypress={handleSelectedClick} role="button" tabindex="0">
-                            <Condition name={condition.name}  value={null} />
+                            <Condition name={condition.name}  value={null} category={allConditions.find((c) => condition.name == c.name)?.category ?? "other"} />
                         </div>
                         <div class="condition-level-controls">
                             {#if condition.value}
