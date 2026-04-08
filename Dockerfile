@@ -30,7 +30,7 @@ USER node
 CMD ["node", "build"]
 
 # ========== LOCAL ==========
-FROM node:25-bookworm-slim@sha256:f9c83b754b8164cf635f7ecdadd93df54ed147350aed2448299966bfafed8d52 AS local
+FROM node:25-bookworm-slim@sha256:435f3537a088a01fd208bb629a4b69c28d85deb9a60af8a710cafc3befd6e3be AS local
 
 WORKDIR /app
 RUN apt-get update && \
