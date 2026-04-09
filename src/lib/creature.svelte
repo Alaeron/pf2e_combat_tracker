@@ -63,7 +63,7 @@
         background-color: #703030;
     }
     .creature-dead {
-        background-color: #202020;
+        background-color: #303030;
     }
     .creature-dead .name {
         text-decoration: line-through;

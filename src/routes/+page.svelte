@@ -455,6 +455,9 @@
             transition: 0.2s;
         }
     }
+    .creature-wrapper.creature-dead {
+        filter: opacity(0.5) grayscale(0.5);
+    }
     .creature-team-friendly .creature-drag-handle,
     .creature-team-friendly .creature-kill,
     .creature-team-friendly .creature-delete {
@@ -473,7 +476,7 @@
     .creature-dead .creature-drag-handle,
     .creature-dead .creature-kill,
     .creature-dead .creature-delete {
-        background-color: #202020;
+        background-color: #303030;
     }
     .creature-delete,
     .creature-kill {
