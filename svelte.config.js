@@ -23,6 +23,10 @@ const config = {
 		adapter: adapter(),
 		experimental: {
 			remoteFunctions: true
+		},
+		prerender: {
+			crawl: false,
+			entries: []
 		}
 	}
 };

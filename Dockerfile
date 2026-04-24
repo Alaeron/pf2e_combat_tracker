@@ -9,8 +9,10 @@ RUN --mount=type=bind,source=./package.json,target=./package.json \
 
 COPY src/ src/
 COPY static/ static/
-COPY package.json package-lock.json vite.config.ts svelte.config.js tsconfig.json /app/
+COPY .svelte-kit/tsconfig.json /app/.svelte-kit/tsconfig.json
+COPY package.json package-lock.json vite.config.ts svelte.config.js  tsconfig.json drizzle.config.ts /app/
 
+ENV DB_URL /data/data.db
 RUN npm run build && \
     npm prune --production && \
     find build -name "*.map" -delete
@@ -19,9 +21,10 @@ RUN npm run build && \
 FROM node:25-alpine@sha256:ad82ecad30371c43f4057aaa4800a8ed88f9446553a2d21323710c7b937177fc AS prod
 
 WORKDIR /app
-COPY --from=builder --chown=node:node /app/build build/
-COPY --from=builder --chown=node:node /app/node_modules node_modules/
-COPY --from=builder --chown=node:node package*.json ./
+COPY --from=builder --chown=node:node /app/build/ build/
+COPY --from=builder --chown=node:node /app/node_modules/ node_modules/
+COPY --from=builder --chown=node:node /app/package*.json ./
+COPY --from=builder --chown=node:node /app/src/lib/server/db/migrations/ src/lib/server/db/migrations/
 
 EXPOSE 3000
 ENV NODE_ENV=production

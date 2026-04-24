@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import { db } from '$lib/server/db/client';
 import { condition, conditionCategory, team } from '$lib/server/db/schema';
 import type { ServerInit } from '@sveltejs/kit';
@@ -5,6 +6,9 @@ import { drizzle } from "drizzle-orm/libsql"
 import { migrate } from "drizzle-orm/libsql/migrator"
 
 export const init: ServerInit = async () => {
+    if (building) {
+        return;
+    }
 	console.log("Running migrations...");
 
     const migrationClient = drizzle({
@@ -14,7 +18,7 @@ export const init: ServerInit = async () => {
     });
 
     try {
-        await migrate(migrationClient, { migrationsFolder: "./src/lib/server/db/migrations"});
+        await migrate(migrationClient, { migrationsFolder: "src/lib/server/db/migrations"});
         console.log("Database migrations completed successfully.")
     } catch (error) {
         console.error("Migration failed: ", error)
