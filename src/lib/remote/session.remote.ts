@@ -4,7 +4,6 @@ import { db } from "$lib/server/db/client"
 import { condition, creature, sessionCondition, session, sessionCreature, team, conditionCategory } from "$lib/server/db/schema"
 import z from 'zod'
 import { error } from "@sveltejs/kit"
-import { rollupVersion } from "vite"
 
 function dedupeById(array: object[]) {
     const seen = new Set();

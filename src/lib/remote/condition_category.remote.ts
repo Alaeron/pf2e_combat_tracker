@@ -4,6 +4,7 @@ import { db } from "$lib/server/db/client"
 import { conditionCategory } from "$lib/server/db/schema"
 import z from 'zod'
 import { error } from "@sveltejs/kit"
+import { getAllConditions } from "./condition.remote"
 
 
 const getConditionCategory = query(z.int(), async (id: number) => {
@@ -97,6 +98,7 @@ const deleteConditionCategory = command(
             .get()
 
         getAllConditionCategories().refresh()
+        getAllConditions().refresh()
 
         return deletedConditionCategory
     }
