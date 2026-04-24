@@ -53,7 +53,6 @@
 	let editingCreature   = $derived.by(() => sessionState.creatures?.find((c) => c.id === editingCreatureId))
 	let pollingTimeout: NodeJS.Timeout | null = null;
 
-	console.log(sessionState);
 	startPolling();
 
 	function startPolling() {
@@ -277,13 +276,10 @@
 <style>
 	header {
 		display: flex;
-		justify-content: space-between;
+		flex-flow: row wrap;
 		align-items: center;
 		padding: 0.4rem;
 
-		& h1 {
-			margin: 0px;
-		}
 		& a,
 		& a:visited {
 			text-decoration: none;
@@ -292,7 +288,34 @@
 		& a:hover {
 			text-decoration: underline;
 		}
-
+		& > * {
+			display: flex;
+		}
+	}
+	@media screen and (min-width: 700px){
+		header {
+			justify-content: space-between;
+		}
+		h1 {
+			width: 18rem;
+		}
+		.header-right {
+			width: 18rem;
+			justify-content: flex-end;
+		}
+	}
+	@media screen and (min-width: 100px) and (max-width: 699px) {
+		header {
+			justify-content: stretch;
+			& > * {
+				flex-grow: 1;
+				width: 100%;
+				justify-content: center;
+			}
+		}
+		header .header-right {
+			justify-content: center;
+		}
 	}
 
 	.header-right {

@@ -5,14 +5,19 @@ import { condition, creature, sessionCondition, session, sessionCreature, team, 
 import z from 'zod'
 import { error } from "@sveltejs/kit"
 
-// TODO: implement
-const createSession = command(async () => {
-    const newSession = await db
-        .insert(session)
-        .values({})
-        .returning()
-        .get()
-    return newSession
+
+const createSession = form(
+    z.object({
+        name: z.string()
+    }),
+    async ({name}) => {
+        const newSession = await db
+            .insert(session)
+            .values({name: name})
+            .returning()
+            .get()
+
+        return newSession
 });
 
 const getSession = query(z.int(), async (id: number) => {
@@ -193,6 +198,9 @@ const deleteSession = command(z.int(), async (id: number) => {
         .where(eq(session.id, id))
         .returning()
         .get()
+
+    getAllSessions().refresh()
+
     return deletedSession
 });
 
@@ -398,6 +406,8 @@ const resetSession = command(
             .delete(sessionCondition)
             .where(eq(sessionCondition.sessionId, sessionId))
             .returning()
+
+        void getSessionState().refresh()
     }
 )
 

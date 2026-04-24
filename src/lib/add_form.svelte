@@ -18,8 +18,8 @@
             const nameElement: HTMLInputElement | null = document.querySelector("dialog input[type='text'][name='name']");
             nameElement?.focus();
 
-            const friendlyRadioElement: HTMLInputElement | null = document.querySelector("dialog input[type='radio'][value='friendly']");
-            friendlyRadioElement?.click();
+            const firstRadioElement: HTMLInputElement | null = document.querySelector("dialog input[type='radio']");
+            firstRadioElement?.click();
         } else {
             dialog?.close()
         }
