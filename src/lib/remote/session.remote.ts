@@ -4,7 +4,16 @@ import { db } from "$lib/server/db/client"
 import { condition, creature, sessionCondition, session, sessionCreature, team, conditionCategory } from "$lib/server/db/schema"
 import z from 'zod'
 import { error } from "@sveltejs/kit"
+import { rollupVersion } from "vite"
 
+function dedupeById(array: object[]) {
+    const seen = new Set();
+    return array.filter(item => {
+        const duplicate = seen.has(item.id);
+        seen.add(item.id);
+        return !duplicate
+    })
+}
 
 const createSession = form(
     z.object({
@@ -170,26 +179,92 @@ const getSessionState = query(z.int(), async (id: number) => {
     return formattedResults
 });
 
-const loadSession = command(z.json(), async (data: string) => {
+const loadSession = command(
+    z.object({
+        sessionId: z.int().min(1),
+        data: z.json()
+    }), async ({sessionId, data}) => {
     const parsedData = JSON.parse(data);
-    //console.log(JSON.stringify(parsedData, null, 2));
 
-    // Extract teams
-    let teams = parsedData.sessionState?.creatures?.map((c) => {
-        return {
-            id: c?.team?.id,
-            name: c?.team?.name,
-            color: c?.team?.color,
-        }
-    })
-    teams = teams.filter((item, index) => teams.indexOf(item) === index)
-    console.log(teams)
+    // For now, just use session data & ids
+    // TODO: Implement detection of possible id mismatches / value changes
 
-    // Extract conditions
+    // // Extract teams
+    // let teams = parsedData.sessionState.creatures.map((c) => {
+    //     return {
+    //         id: c.team.id,
+    //         name: c.team.name,
+    //         color: c.team.color,
+    //     }
+    // })
+    // teams = dedupeById(teams)
+
+    // // Extract conditions
+    // let conditions = parsedData.sessionState.creatures.flatMap((c) => {
+    //     return c.conditions.map(co => {
+    //         return {
+    //             id: co.id,
+    //             name: co.name,
+    //             categoryId: co.categoryId,
+    //             valueRequired: co.value !== null
+    //         }
+    //     })
+    // })
+    // conditions = dedupeById(conditions)
 
     // Extract session creatures
+    const sessionCreatures = parsedData.sessionState.creatures.map((c) => {
+        return {
+            sessionId: parsedData.sessionState.id,
+            creatureId: c.id,
+            teamId: c.team.id,
+            isDead: c.isDead,
+            order: c.order,
+            round: c.round
+        }
+    })
 
     // Extract session conditions
+    const sessionConditions = parsedData.sessionState.creatures.flatMap((c) => {
+        return c.conditions.map(co => {
+            return {
+                sessionId: parsedData.sessionState.id,
+                creatureId: c.id,
+                conditionId: co.id,
+                value: co.value
+            }
+        })
+    })
+
+    // Reset the current session
+    await resetSession(sessionId);
+
+
+    await db.transaction(async (tx) => {
+        // Save session creatures
+        await tx.insert(sessionCreature)
+            .values(sessionCreatures.map((c) => { return {
+                sessionId: sessionId,
+                creatureId: c.creatureId,
+                teamId: c.teamId,
+                isDead: c.isDead,
+                order: c.order,
+                round: c.round
+            }}))
+            .returning()
+            .all()
+
+        // Save session conditions
+        await tx.insert(sessionCondition)
+            .values(sessionConditions.map((c) => { return {
+                sessionId: sessionId,
+                creatureId: c.creatureId,
+                conditionId: c.conditionId,
+                value: c.value
+            }}))
+            .returning()
+            .all()
+    });
 });
 
 const deleteSession = command(z.int(), async (id: number) => {

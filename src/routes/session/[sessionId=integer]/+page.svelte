@@ -145,7 +145,7 @@
 		reader.onload = async (e) => {
 			if (e.target && e.target.result) {
 				let importDataJson = e.target.result.toString();
-				await loadSession(importDataJson)
+				await loadSession({sessionId: data.sessionId, data: importDataJson})
 			}
 		};
 
