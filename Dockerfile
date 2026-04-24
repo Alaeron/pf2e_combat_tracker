@@ -37,6 +37,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
         nano \
+        sqlite3 \
         openssh-client \
         ca-certificates \
         fonts-liberation \

@@ -4,11 +4,14 @@ services:
       context: .
       target: local
     command: ["npm", "run", "dev"]
+    environment:
+      DB_URL: /data/data.db
     ports:
       - 4173:4173 # http://localhost:4173 - Preview
       - 5173:5173 # http://localhost:5173 - Dev
     volumes:
-      - ${LOCAL_WORKSPACE_FOLDER:-./}:/app
+      - ${LOCAL_WORKSPACE_FOLDER:-.}:/app
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/volumes/data:/data
   # chromium:
   #   image: selenium/standalone-chromium:145.0-20260222
   #   shm_size: 2g

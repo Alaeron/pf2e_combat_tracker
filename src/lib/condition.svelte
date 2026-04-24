@@ -1,20 +1,35 @@
 <script lang="ts">
     export interface ICondition {
+        id: number,
+        name: string,
+        valueRequired: boolean,
+        categoryId: number,
+        categoryName: string,
+        categoryColor: string
+    }
+
+    export interface ISessionCondition {
+        id: number,
         name: string,
         value: number | null,
-        category: string
+        categoryId: number,
+        categoryName: string,
+        categoryColor: string
     }
     interface IConditionProps {
-        name: string,
-        value: number | null,
-        category: string,
+        condition: ISessionCondition
         autoGrow?: boolean
     }
-    let { name, value, category, autoGrow = true }: IConditionProps = $props();
+    let { condition, autoGrow = true }: IConditionProps = $props();
     let autoGrowClass = $derived(autoGrow ? "condition-grow": "")
 </script>
 
-<span class="condition {category} {autoGrowClass}">{name} {value}</span>
+<span
+    class="condition {autoGrowClass}"
+    style:background-color={condition.categoryColor}
+>
+    {condition.name} {condition.value}
+</span>
 
 <style>
     .condition {
@@ -29,29 +44,5 @@
     }
     .condition-grow {
         flex-grow: 1;
-    }
-    .detection {
-        background-color: #2b2b91;
-    }
-    .death {
-        background-color: #000000;
-    }
-    .lowered {
-        background-color: #7d2b91;
-    }
-    .senses {
-        background-color: #918c47;
-    }
-    .mental {
-        background-color: #af5b55;
-    }
-    .movement {
-        background-color: #ad7a3f;
-    }
-    .damage {
-        background-color: #b31f1f;
-    }
-    .buff {
-        background-color: #3f9b3f;
     }
 </style>

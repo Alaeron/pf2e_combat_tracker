@@ -1,43 +1,30 @@
 <script lang="ts">
-    export interface IAddFormOnSubmitData {
-        name: string,
-        team: string
-    }
+    import { addSessionCreature } from "$lib/remote/session.remote";
+	import { getAllTeams } from "$lib/remote/team.remote";
+
     interface IAddFormProps {
-        showAddForm: boolean,
-        onSubmit: CallableFunction
+        showAddForm: boolean
+        sessionId: number
     }
-    let {
-        showAddForm = $bindable(),
-        onSubmit,
-    }: IAddFormProps = $props();
+    let { showAddForm = $bindable(), sessionId }: IAddFormProps = $props();
+    let teams = await getAllTeams();
 
     let dialog = $state<HTMLDialogElement>();
-    let name = $state<string>('');
-    let team = $state<string>('environment');
 
     $effect(() => {
         if (showAddForm && dialog) {
             dialog.showModal();
+
             const nameElement: HTMLInputElement | null = document.querySelector("dialog input[type='text'][name='name']");
-            if (nameElement) {
-                nameElement.focus();
-            }
+            nameElement?.focus();
+
             const friendlyRadioElement: HTMLInputElement | null = document.querySelector("dialog input[type='radio'][value='friendly']");
-            if (friendlyRadioElement) {
-                friendlyRadioElement.click();
-            }
+            friendlyRadioElement?.click();
         } else {
             dialog?.close()
         }
     });
 
-    function handleSubmit(e: SubmitEvent) {
-        e.preventDefault();
-        onSubmit?.({ name, team });
-        name = '';
-        team = '';
-    }
 </script>
 
 <dialog
@@ -45,29 +32,25 @@
     onclose={() => (showAddForm = false)}
     onclick={(e) => { if (e.target === dialog) dialog.close(); }}
 >
-    <form onsubmit={handleSubmit}>
+    <form {...addSessionCreature.enhance(async ({ form, submit }) => {
+        if (await submit()) {
+            form.reset();
+        }
+        dialog?.close();
+    })}>
+        <input {...addSessionCreature.fields.sessionId.as('hidden', `${sessionId}`)} />
         <div class="add-form-row">
-            <label for="name">Name</label>
-            <input name="name" type="text" title="Name" bind:value={name}/>
+            <label for="add-creature-name">Name</label>
+            <input id="add-creature-name" {...addSessionCreature.fields.name.as('text')} title="Name" />
         </div>
 
         <div class="add-form-row">
-            <div>
-                <label for="environment">Environment</label>
-                <input id="environment" name="team" type="radio" title="Environment" value="environment" bind:group={team}/>
-            </div>
-            <div>
-                <label for="friendly">Friendly</label>
-                <input id="friendly" name="team" type="radio" title="Friendly" value="friendly" bind:group={team} checked/>
-            </div>
-            <div>
-                <label for="neutral">Neutral</label>
-                <input id="neutral" name="team" type="radio" title="Neutral" value="neutral" bind:group={team}/>
-            </div>
-            <div>
-                <label for="hostile">Hostile</label>
-                <input id="hostile" name="team" type="radio" title="Hostile" value="hostile" bind:group={team}/>
-            </div>
+            {#each teams as team (team.id)}
+            <label>
+                <span>{team.name}</span>
+                <input {...addSessionCreature.fields.teamId.as("radio", `${team.id}`)} title={team.name} />
+            </label>
+            {/each}
         </div>
         <input type="submit" value="Add"/>
     </form>
@@ -97,20 +80,17 @@
         display: flex;
         flex-flow: column;
 
-        & > div {
+        & > label {
             flex-grow: 1;
             display: flex;
             flex-flow: row;
             justify-content: space-between;
             gap: 1rem;
-
-            & label {
-                cursor: pointer;
-            }
+            cursor: pointer;
         }
     }
     input[type="submit"],
-    input[type="text"] {
+    input:not([type]) {
         border: none;
         font-size: 1rem;
         padding: .2rem .4rem;
