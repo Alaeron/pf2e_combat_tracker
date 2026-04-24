@@ -1,5 +1,5 @@
-import { query} from "$app/server"
-import { eq } from "drizzle-orm"
+import { query, form, command } from "$app/server"
+import { eq, sql } from "drizzle-orm"
 import { db } from "$lib/server/db/client"
 import { conditionCategory } from "$lib/server/db/schema"
 import z from 'zod'
@@ -41,7 +41,71 @@ const getAllConditionCategories = query(async () => {
     return foundCategories
 });
 
+const updateAllConditionCategories = form(
+    z.object({
+        id: z.array(z.string().min(1)),
+        name: z.array(z.string().min(1)),
+        color: z.array(z.string().min(7))
+    }),
+    async ({id, name, color}) => {
+        const data = id.map((item) => {
+            return {
+                id: item,
+                name: name[id.indexOf(item)],
+                color: color[id.indexOf(item)],
+            }
+        })
+        const conditionCategories = await db.insert(conditionCategory)
+            .values(data)
+            .onConflictDoUpdate({
+                target: conditionCategory.id,
+                set: {
+                    name: sql.raw(`excluded.${conditionCategory.name.name}`),
+                    color: sql.raw(`excluded.${conditionCategory.color.name}`),
+                }
+            })
+            .returning()
+            .all()
+
+        return conditionCategories
+    }
+);
+
+const addConditionCategory = form(
+    z.object({
+        name: z.string().min(1),
+        color: z.string().min(7),
+    }),
+    async({name, color}) => {
+        const newConditionCategory = await db.insert(conditionCategory)
+            .values({name: name, color: color})
+            .returning()
+            .get()
+
+        return newConditionCategory
+    }
+)
+
+const deleteConditionCategory = command(
+    z.object({
+        id: z.int().min(1),
+    }),
+    async({id}) => {
+        const deletedConditionCategory = await db.delete(conditionCategory)
+            .where(eq(conditionCategory.id, id))
+            .returning()
+            .get()
+
+        getAllConditionCategories().refresh()
+
+        return deletedConditionCategory
+    }
+)
+
 export {
     getConditionCategory,
     getAllConditionCategories,
+    updateAllConditionCategories,
+    addConditionCategory,
+    deleteConditionCategory,
 }
