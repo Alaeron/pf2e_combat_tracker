@@ -6,7 +6,8 @@
 		// Sets the run context to one level up instead of the .devcontainer folder.
 		"context": "..",
 		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
-		"dockerfile": "../Dockerfile"
+		"dockerfile": "../Dockerfile",
+		"target": "local"
 	},
 	"features": {
 		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
@@ -22,12 +23,14 @@
 				"eamodio.gitlens",
 				"svelte.svelte-vscode",
 				"redhat.vscode-yaml",
-				"dbaeumer.vscode-eslint"
+				"dbaeumer.vscode-eslint",
+				"alexcvzz.vscode-sqlite"
 			],
 			"settings": {
 				"svelte.ask-to-enable-ts-plugin": false,
 				"svelte.enable-ts-plugin": true,
-				"js/ts.validate.enabled": false
+				"js/ts.validate.enabled": false,
+				"gitlens.hovers.currentLine.enabled": false
 			}
 		}
 	},

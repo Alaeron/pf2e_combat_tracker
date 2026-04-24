@@ -1,42 +1,39 @@
 <script lang="ts">
 	import Condition from '$lib/condition.svelte';
-	import type { ICondition } from '$lib/condition.svelte';
+	import type { ISessionCondition } from '$lib/condition.svelte';
 
     export interface ICreature {
         id: number,
         name: string,
         order: number,
-        conditions: ICondition[],
+        round: number,
+        conditions: ISessionCondition[],
         isDead: boolean,
-        team: string
+        team: {
+            id: number,
+            name: string,
+            color: string
+        }
     }
     interface ICreatureProps {
-        name: string,
-        order: number,
-        conditions: ICondition[],
-        isDead?: boolean,
-        team: string,
+        creature: ICreature
         onEditClick: CallableFunction
     }
 
-    let { name, order, conditions, isDead = false, team, onEditClick }: ICreatureProps = $props();
-    let classDead = $derived(isDead ? "creature-dead": "");
-    let classTeam = $derived(`creature-team-${team}`);
+    let { creature, onEditClick }: ICreatureProps = $props();
+    let classDead = $derived(creature.isDead ? "creature-dead": "");
 
-    export interface ICreatureOnEditClickData {
-        name: string
-    }
     function handleEditClick() {
-        onEditClick?.({ name });
+        onEditClick?.({ creatureId: creature.id });
     }
 </script>
 
-<div class="creature {classDead} {classTeam}">
-    <span class="order">{order}</span>
-    <span class="name">{name}</span>
+<div class="creature {classDead}" style:background-color={creature.team.color}>
+    <span class="order">{creature.order}</span>
+    <span class="name">{creature.name}</span>
     <div class="conditions" onclick={handleEditClick} onkeypress="{handleEditClick}" role="button" tabindex="0">
-        {#each conditions as condition, index (index)}
-        <Condition name={condition.name} value={condition.value} category={condition.category} autoGrow={false}/>
+        {#each creature.conditions as condition, index (index)}
+        <Condition condition={condition} autoGrow={false} />
         {/each}
         <div class="edit-overlay"><span>click to edit</span></div>
     </div>
@@ -52,15 +49,6 @@
         font-size: 18px;
         padding: .8rem 1rem .8rem 0.1rem;
         transition: 0.2s;
-    }
-    .creature-team-friendly {
-        background-color: #303070;
-    }
-    .creature-team-neutral {
-        background-color: #707030;
-    }
-    .creature-team-hostile {
-        background-color: #703030;
     }
     .creature-dead {
         background-color: #303030;
