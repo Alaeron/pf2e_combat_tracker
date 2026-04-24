@@ -17,7 +17,7 @@
     }: IEditFormProps = $props();
 
     let dialog = $state<HTMLDialogElement>();
-    let allConditions: ICondition[] = await getAllConditions();
+    let allConditions: ICondition[] = $derived(await getAllConditions());
     let selectedConditions: ISessionCondition[] | undefined = $derived(creature?.conditions)
 
     let unselectedConditions: ICondition[] = $derived.by(() => {

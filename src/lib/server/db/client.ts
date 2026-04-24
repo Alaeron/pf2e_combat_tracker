@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { drizzle } from 'drizzle-orm/libsql';
 
 const db = drizzle({
@@ -5,5 +6,7 @@ const db = drizzle({
         url: `file://${process.env.DB_URL}`
     }
 });
+
+db.run(sql`PRAGMA foreign_keys = ON`);
 
 export { db };
