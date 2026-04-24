@@ -9,7 +9,6 @@ RUN --mount=type=bind,source=./package.json,target=./package.json \
 
 COPY src/ src/
 COPY static/ static/
-COPY .svelte-kit/tsconfig.json /app/.svelte-kit/tsconfig.json
 COPY package.json package-lock.json vite.config.ts svelte.config.js  tsconfig.json drizzle.config.ts /app/
 
 ENV DB_URL /data/data.db
