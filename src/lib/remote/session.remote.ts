@@ -407,7 +407,7 @@ const resetSession = command(
             .where(eq(sessionCondition.sessionId, sessionId))
             .returning()
 
-        void getSessionState().refresh()
+        void getSessionState(sessionId).refresh()
     }
 )
 
