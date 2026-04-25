@@ -187,12 +187,12 @@
 			onclick={async () => await resetSession(data.sessionId)}><RotateCcwIcon /></button
 		>
 		{#if isFullscreen }
-		<button id="maximize-button" onclick={() => {
+		<button title="Exit Fullscreen" onclick={() => {
 			document.body.style.zoom = "100%";
 			document?.exitFullscreen();
 		}}><Minimize2Icon/></button>
 		{:else}
-		<button id="minimize-button" onclick={() => {
+		<button title="Enter Fullscreen" onclick={() => {
 			document.body.style.zoom = "200%";
 			document?.querySelector("body")?.requestFullscreen()
 		}}><Maximize2Icon/></button>
