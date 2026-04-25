@@ -20,7 +20,10 @@
 		PlusIcon,
 		RotateCcwIcon,
 		UploadIcon,
-		DownloadIcon
+		DownloadIcon,
+		Maximize2Icon,
+		Minimize2Icon
+
 	} from 'svelte-feather-icons';
 	import Creature from '$lib/creature.svelte';
 	import AddForm from '$lib/add_form.svelte';
@@ -49,11 +52,18 @@
 	});
 	let showAddForm       = $state<boolean>(false);
 	let showEditForm      = $state<boolean>(false);
+	let isFullscreen      = $state<boolean>(false);
 	let editingCreatureId = $state<number | undefined>(undefined);
 	let editingCreature   = $derived.by(() => sessionState.creatures?.find((c) => c.id === editingCreatureId))
 	let pollingTimeout: NodeJS.Timeout | null = null;
 
 	startPolling();
+
+	if (browser) {
+		document.body.addEventListener("fullscreenchange", () => {
+			isFullscreen = document.fullscreenElement !== null
+		})
+	}
 
 	function startPolling() {
 		if (browser) {
@@ -176,6 +186,17 @@
 			title="Reset Combat"
 			onclick={async () => await resetSession(data.sessionId)}><RotateCcwIcon /></button
 		>
+		{#if isFullscreen }
+		<button id="maximize-button" onclick={() => {
+			document.body.style.zoom = "100%";
+			document?.exitFullscreen();
+		}}><Minimize2Icon/></button>
+		{:else}
+		<button id="minimize-button" onclick={() => {
+			document.body.style.zoom = "200%";
+			document?.querySelector("body")?.requestFullscreen()
+		}}><Maximize2Icon/></button>
+		{/if}
 	</div>
 </header>
 
@@ -278,7 +299,12 @@
 		display: flex;
 		flex-flow: row wrap;
 		align-items: center;
-		padding: 0.4rem;
+		padding: 0.5rem;
+
+		& h1,
+		& h2 {
+			margin: 0rem;
+		}
 
 		& a,
 		& a:visited {
