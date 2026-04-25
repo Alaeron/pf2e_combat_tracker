@@ -1,22 +1,23 @@
 import { query, command, form } from "$app/server"
 import { eq, and, sql, not } from "drizzle-orm"
 import { db } from "$lib/server/db/client"
-import { condition, creature, sessionCondition, session, sessionCreature, team, conditionCategory } from "$lib/server/db/schema"
+import { condition, sessionCondition, session, sessionCreature, team, conditionCategory } from "$lib/server/db/schema"
 import z from 'zod'
 import { error } from "@sveltejs/kit"
+import type { SQLiteTransaction } from "drizzle-orm/sqlite-core"
 
-function dedupeById(array: object[]) {
-    const seen = new Set();
-    return array.filter(item => {
-        const duplicate = seen.has(item.id);
-        seen.add(item.id);
-        return !duplicate
-    })
-}
+// function dedupeById(array: { id: number }[]) {
+//     const seen = new Set();
+//     return array.filter(item => {
+//         const duplicate = seen.has(item.id);
+//         seen.add(item.id);
+//         return !duplicate
+//     })
+// }
 
-const createSession = form(
+const addSession = form(
     z.object({
-        name: z.string()
+        name: z.string().min(1)
     }),
     async ({name}) => {
         const newSession = await db
@@ -55,8 +56,8 @@ const getSessionState = query(z.int(), async (id: number) => {
         .select({
             sessionId: session.id,
             sessionName: session.name,
-            creatureId: sessionCreature.creatureId,
-            creatureName: creature.name,
+            creatureId: sessionCreature.id,
+            creatureName: sessionCreature.name,
             teamId: sessionCreature.teamId,
             teamName: team.name,
             teamColor: team.color,
@@ -72,11 +73,10 @@ const getSessionState = query(z.int(), async (id: number) => {
         })
         .from(session)
         .leftJoin(sessionCreature, eq(session.id, sessionCreature.sessionId))
-        .leftJoin(creature, eq(creature.id, sessionCreature.creatureId))
         .leftJoin(team, eq(team.id, sessionCreature.teamId))
         .leftJoin(sessionCondition, and(
             eq(session.id, sessionCondition.sessionId),
-            eq(sessionCondition.creatureId, sessionCreature.creatureId)
+            eq(sessionCondition.creatureId, sessionCreature.id)
         ))
         .leftJoin(condition, eq(condition.id, sessionCondition.conditionId))
         .leftJoin(conditionCategory, eq(conditionCategory.id, condition.categoryId))
@@ -215,7 +215,8 @@ const loadSession = command(
     const sessionCreatures = parsedData.sessionState.creatures.map((c) => {
         return {
             sessionId: parsedData.sessionState.id,
-            creatureId: c.id,
+            id: c.id,
+            name: c.name,
             teamId: c.team.id,
             isDead: c.isDead,
             order: c.order,
@@ -234,17 +235,19 @@ const loadSession = command(
             }
         })
     })
+    console.log(sessionConditions);
 
     // Reset the current session
     await resetSession(sessionId);
 
 
-    await db.transaction(async (tx) => {
+    await db.transaction(async (tx: SQLiteTransaction) => {
         // Save session creatures
         await tx.insert(sessionCreature)
             .values(sessionCreatures.map((c) => { return {
                 sessionId: sessionId,
-                creatureId: c.creatureId,
+                id: c.id,
+                name: c.name,
                 teamId: c.teamId,
                 isDead: c.isDead,
                 order: c.order,
@@ -255,11 +258,11 @@ const loadSession = command(
 
         // Save session conditions
         await tx.insert(sessionCondition)
-            .values(sessionConditions.map((c) => { return {
+            .values(sessionConditions.map((co) => { return {
                 sessionId: sessionId,
-                creatureId: c.creatureId,
-                conditionId: c.conditionId,
-                value: c.value
+                creatureId: co.creatureId,
+                conditionId: co.conditionId,
+                value: co.value
             }}))
             .returning()
             .all()
@@ -285,13 +288,10 @@ const addSessionCreature = form(
         teamId: z.string().min(1)
     }),
     async ({ sessionId, name, teamId }) => {
-        const newCreature = await db.insert(creature).values({
-            name: name,
-        }).returning().get();
 
         const newSessionCreature = await db.insert(sessionCreature).values({
             sessionId: sessionId,
-            creatureId: newCreature.id,
+            name: name,
             teamId: teamId,
             isDead: false,
             order: sql`(select COALESCE(MAX(sc."order") + 1, 1) FROM session_creature sc WHERE sc.session_id = ${sessionId})`,
@@ -315,7 +315,7 @@ const toggleSessionCreatureDeath = command(
             })
             .where(and(
                 eq(sessionCreature.sessionId, sessionId),
-                eq(sessionCreature.creatureId, creatureId)
+                eq(sessionCreature.id, creatureId)
             ))
             .returning()
             .get()
@@ -335,7 +335,7 @@ const deleteSessionCreature = command(
             .delete(sessionCreature)
             .where(and(
                 eq(sessionCreature.sessionId, sessionId),
-                eq(sessionCreature.creatureId, creatureId)
+                eq(sessionCreature.id, creatureId)
             ))
             .returning()
             .get()
@@ -493,8 +493,8 @@ const nextSessionTurn = command(
             .set({ round: sql`${sessionCreature.round} + 1` })
             .where(sql`
                 ${sessionCreature.sessionId}=${sessionId}
-                AND ${sessionCreature.creatureId} IN (
-                    SELECT ${sessionCreature.creatureId}
+                AND ${sessionCreature.id} IN (
+                    SELECT ${sessionCreature.id}
                     FROM ${sessionCreature}
                     WHERE ${sessionCreature.sessionId}=${sessionId}
                     ORDER BY ${sessionCreature.round}, ${sessionCreature.order}
@@ -518,8 +518,8 @@ const previousSessionTurn = command(
             .set({ round: sql`${sessionCreature.round} - 1` })
             .where(sql`
                 ${sessionCreature.sessionId}=${sessionId}
-                AND ${sessionCreature.creatureId} IN (
-                    SELECT ${sessionCreature.creatureId}
+                AND ${sessionCreature.id} IN (
+                    SELECT ${sessionCreature.id}
                     FROM ${sessionCreature}
                     WHERE ${sessionCreature.sessionId}=${sessionId}
                     ORDER BY ${sessionCreature.round} DESC, ${sessionCreature.order} DESC
@@ -566,7 +566,7 @@ const reorderSession = command(
                     .set({order: c.order})
                     .where(and(
                         eq(sessionCreature.sessionId, sessionId),
-                        eq(sessionCreature.creatureId, c.id)
+                        eq(sessionCreature.id, c.id)
                     ))
             }
         });
@@ -576,7 +576,7 @@ const reorderSession = command(
 )
 
 export {
-    createSession,
+    addSession,
     getSession,
     getAllSessions,
     getSessionState,

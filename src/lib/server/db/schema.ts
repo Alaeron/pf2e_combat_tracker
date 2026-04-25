@@ -20,13 +20,6 @@ const team = sqliteTable("team", {
         .notNull()
         .default("#404040"),
 });
-const creature = sqliteTable("creature", {
-    id: integer("id")
-        .primaryKey({ autoIncrement: true })
-        .notNull(),
-    name: text("name")
-        .notNull(),
-});
 const conditionCategory = sqliteTable("condition_category", {
     id: integer("id")
         .primaryKey({ autoIncrement: true })
@@ -63,8 +56,10 @@ const sessionCreature = sqliteTable("session_creature", {
     sessionId: integer("session_id")
         .references(() => session.id, {onDelete: "cascade"})
         .notNull(),
-    creatureId: integer("creature_id")
-        .references(() => creature.id, {onDelete: "cascade"})
+    id: integer("creature_id")
+        .primaryKey({ autoIncrement: true })
+        .notNull(),
+    name: text("name")
         .notNull(),
     teamId: integer("team_id")
         .references(() => team.id, {onDelete: "cascade"})
@@ -77,15 +72,13 @@ const sessionCreature = sqliteTable("session_creature", {
     round: integer()
         .notNull()
         .default(0)
-}, (table) => [
-    primaryKey({ columns: [ table.sessionId, table.creatureId ] }),
-]);
+});
 const sessionCondition = sqliteTable("session_condition", {
     sessionId: integer("session_id")
         .references(() => session.id, {onDelete: "cascade"})
         .notNull(),
     creatureId: integer("creature_id")
-        .references(() => creature.id, {onDelete: "cascade"})
+        .references(() => sessionCreature.id, {onDelete: "cascade"})
         .notNull(),
     conditionId: integer("condition_id")
         .references(() => condition.id, {onDelete: "cascade"})
@@ -99,7 +92,6 @@ const sessionCondition = sqliteTable("session_condition", {
 export {
     team,
     session,
-    creature,
     condition,
     conditionCategory,
     sessionCreature,

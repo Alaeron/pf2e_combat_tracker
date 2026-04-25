@@ -2,7 +2,7 @@ import { building } from '$app/environment';
 import { sql } from "drizzle-orm";
 import { drizzle } from 'drizzle-orm/libsql';
 
-let db = undefined as unknown as db;
+let db = undefined as unknown;
 
 if (!building) {
     db = drizzle({

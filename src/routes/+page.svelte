@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAllSessions, createSession, deleteSession } from "$lib/remote/session.remote";
+	import { getAllSessions, addSession, deleteSession } from "$lib/remote/session.remote";
 
 	let sessions = $derived(await getAllSessions());
 </script>
@@ -23,8 +23,8 @@
 			</li>
 			{/each}
 		</ul>
-		<form {...createSession}>
-			<input {...createSession.fields.name.as("text")} placeholder="New Session" title="Name">
+		<form {...addSession}>
+			<input {...addSession.fields.name.as("text")} placeholder="New Session" title="Name">
 			<button>Create</button>
 		</form>
 	</div>
