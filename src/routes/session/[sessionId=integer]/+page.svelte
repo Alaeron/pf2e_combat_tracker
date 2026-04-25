@@ -62,7 +62,9 @@
 	if (browser) {
 		document.body.addEventListener("fullscreenchange", () => {
 			isFullscreen = document.fullscreenElement !== null
-			document.body.style.zoom = isFullscreen ? "200%" : "100%";
+			document.querySelectorAll(".initiative-list, .toolbar")?.forEach((e) => {
+				(e as HTMLElement).style.zoom = isFullscreen ? "150%" : "100%";
+			})
 		})
 	}
 
@@ -189,11 +191,11 @@
 		>
 		{#if isFullscreen }
 		<button title="Exit Fullscreen" onclick={() => {
-			document?.exitFullscreen();
+			document.exitFullscreen();
 		}}><Minimize2Icon/></button>
 		{:else}
 		<button title="Enter Fullscreen" onclick={() => {
-			document?.querySelector("body")?.requestFullscreen()
+			document.querySelector("body")?.requestFullscreen()
 		}}><Maximize2Icon/></button>
 		{/if}
 	</div>
@@ -298,7 +300,7 @@
 		display: flex;
 		flex-flow: row wrap;
 		align-items: center;
-		padding: 0.5rem;
+		padding: 0rem 0.5rem;
 
 		& h1,
 		& h2 {
@@ -348,6 +350,7 @@
 		flex-flow: row nowrap;
 		justify-content: flex-end;
 		gap: 0.4rem;
+		padding-top: .6rem;
 
 		& button {
 			border: none;
