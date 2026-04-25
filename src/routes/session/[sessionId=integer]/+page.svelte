@@ -62,6 +62,7 @@
 	if (browser) {
 		document.body.addEventListener("fullscreenchange", () => {
 			isFullscreen = document.fullscreenElement !== null
+			document.body.style.zoom = isFullscreen ? "200%" : "100%";
 		})
 	}
 
@@ -188,12 +189,10 @@
 		>
 		{#if isFullscreen }
 		<button title="Exit Fullscreen" onclick={() => {
-			document.body.style.zoom = "100%";
 			document?.exitFullscreen();
 		}}><Minimize2Icon/></button>
 		{:else}
 		<button title="Enter Fullscreen" onclick={() => {
-			document.body.style.zoom = "200%";
 			document?.querySelector("body")?.requestFullscreen()
 		}}><Maximize2Icon/></button>
 		{/if}
