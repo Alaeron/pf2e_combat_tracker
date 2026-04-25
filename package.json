@@ -15,7 +15,7 @@
 		"format": "prettier --write .",
 		"db:generate-migrations": "drizzle-kit generate",
 		"db:push": "drizzle-kit push",
-		"db:migrate": "drizzle-kit generate"
+		"db:migrate": "drizzle-kit migrate"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.3",
