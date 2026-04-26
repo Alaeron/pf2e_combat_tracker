@@ -134,7 +134,6 @@
 		hiddenElement.target = '_blank';
 		hiddenElement.download = `combat_${timestamp}.json`;
 		hiddenElement.click();
-		console.log(hiddenElement);
 		hiddenElement.remove();
 	}
 	function handleUploadClick() {
