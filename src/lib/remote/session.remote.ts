@@ -235,18 +235,15 @@ const loadSession = command(
             }
         })
     })
-    console.log(sessionConditions);
 
     // Reset the current session
     await resetSession(sessionId);
 
-
     await db.transaction(async (tx: SQLiteTransaction) => {
         // Save session creatures
-        await tx.insert(sessionCreature)
+        const insertedSessionCreatures = await tx.insert(sessionCreature)
             .values(sessionCreatures.map((c) => { return {
                 sessionId: sessionId,
-                id: c.id,
                 name: c.name,
                 teamId: c.teamId,
                 isDead: c.isDead,
@@ -258,12 +255,16 @@ const loadSession = command(
 
         // Save session conditions
         await tx.insert(sessionCondition)
-            .values(sessionConditions.map((co) => { return {
-                sessionId: sessionId,
-                creatureId: co.creatureId,
-                conditionId: co.conditionId,
-                value: co.value
-            }}))
+            .values(sessionConditions.map((co) => {
+                const targetCreature = sessionCreatures.find((c) => c.id === co.creatureId)
+                const newCreatureId = insertedSessionCreatures.find((c) => c.order === targetCreature.order).id
+                return {
+                    sessionId: sessionId,
+                    creatureId: newCreatureId,
+                    conditionId: co.conditionId,
+                    value: co.value
+                }
+            }))
             .returning()
             .all()
     });

@@ -19,6 +19,7 @@ const team = sqliteTable("team", {
     color: text("color")
         .notNull()
         .default("#404040"),
+    ...timestamp,
 });
 const conditionCategory = sqliteTable("condition_category", {
     id: integer("id")
@@ -29,6 +30,7 @@ const conditionCategory = sqliteTable("condition_category", {
     color: text("color")
         .notNull()
         .default("#707070"),
+    ...timestamp,
 });
 const condition = sqliteTable("condition", {
     id: integer("id")
@@ -42,6 +44,7 @@ const condition = sqliteTable("condition", {
     valueRequired: integer("value_required", { mode: 'boolean' })
         .notNull()
         .default(true),
+    ...timestamp,
 });
 const session = sqliteTable("session", {
     id: integer("id")
@@ -56,7 +59,7 @@ const sessionCreature = sqliteTable("session_creature", {
     sessionId: integer("session_id")
         .references(() => session.id, {onDelete: "cascade"})
         .notNull(),
-    id: integer("creature_id")
+    id: integer("id")
         .primaryKey({ autoIncrement: true })
         .notNull(),
     name: text("name")
@@ -71,7 +74,8 @@ const sessionCreature = sqliteTable("session_creature", {
         .notNull(),
     round: integer()
         .notNull()
-        .default(0)
+        .default(0),
+    ...timestamp,
 });
 const sessionCondition = sqliteTable("session_condition", {
     sessionId: integer("session_id")
@@ -85,6 +89,7 @@ const sessionCondition = sqliteTable("session_condition", {
         .notNull(),
     value: integer("value")
         .default(sql`NULL`),
+    ...timestamp,
 }, (table) => [
     primaryKey({ columns: [ table.sessionId, table.creatureId, table.conditionId ] }),
 ]);
