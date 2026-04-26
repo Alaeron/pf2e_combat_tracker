@@ -13,7 +13,7 @@
 		"check:a11y": "pa11y-ci",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"db:generate-migrations": "drizzle-kit generate",
+		"db:generate": "drizzle-kit generate",
 		"db:push": "drizzle-kit push",
 		"db:migrate": "drizzle-kit migrate"
 	},

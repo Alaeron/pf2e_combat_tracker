@@ -7,7 +7,8 @@ const timestamp = {
         .default(sql`(CURRENT_TIMESTAMP)`),
     updatedAt: integer("updated_at", { mode: "timestamp" })
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
+        .default(sql`(CURRENT_TIMESTAMP)`)
+        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 };
 
 const team = sqliteTable("team", {
