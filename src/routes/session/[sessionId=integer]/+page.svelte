@@ -1,22 +1,9 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
-	import {
-		deleteSessionCreature,
-		getSessionState,
-		loadSession,
-		nextSessionTurn,
-		previousSessionTurn,
-		reorderSession,
-		resetSession,
-		toggleSessionCreatureDeath,
-	} from '$lib/remote/session.remote';
-	import { dragHandleZone, dragHandle } from 'svelte-dnd-action';
+	import { dragHandleZone } from 'svelte-dnd-action';
 	import {
 		ChevronsLeftIcon,
 		ChevronsRightIcon,
-		XIcon,
-		FrownIcon,
-		MenuIcon,
 		PlusIcon,
 		RotateCcwIcon,
 		UploadIcon,
@@ -25,11 +12,19 @@
 		Minimize2Icon
 
 	} from 'svelte-feather-icons';
+	import { browser } from '$app/environment';
+	import {
+		getSessionState,
+		loadSession,
+		nextSessionTurn,
+		previousSessionTurn,
+		reorderSession,
+		resetSession,
+	} from '$lib/remote/session.remote';
 	import Creature from '$lib/creature.svelte';
 	import AddForm from '$lib/add_form.svelte';
 	import EditForm from '$lib/edit_form.svelte';
 	import type { ICreature } from '$lib/creature.svelte';
-	import { browser } from '$app/environment';
 
 	let { data }          = $props();
 	let sessionState      = $derived(await getSessionState(data.sessionId));
@@ -202,10 +197,13 @@
 </header>
 
 <div class="toolbar">
-	<button title="Previous Turn" onclick={async () => await previousSessionTurn(data.sessionId)}><ChevronsLeftIcon size="32" /></button
-	>
+	<button title="Previous Turn" onclick={async () => await previousSessionTurn(data.sessionId)}>
+		<ChevronsLeftIcon size="32" />
+	</button>
 	<span>Round {currentRound}</span>
-	<button title="Next Turn" onclick={async () => await nextSessionTurn(data.sessionId)}><ChevronsRightIcon size="32" /></button>
+	<button title="Next Turn" onclick={async () => await nextSessionTurn(data.sessionId)}>
+		<ChevronsRightIcon size="32" />
+	</button>
 </div>
 
 <div
@@ -219,30 +217,13 @@
 	onfinalize={handleDndCurrentFinalize}
 >
 	{#each currentRoundState as creature (creature.id)}
-		<div
-			class="creature-wrapper {creature.isDead ? 'creature-dead' : ''}"
-			style:background-color={creature.team.color}
-			animate:flip={{ duration: 200 }}
-		>
-			<div class="creature-drag-handle" use:dragHandle style:background-color={creature.team.color}>
-				<span><MenuIcon /></span>
-			</div>
-			<Creature creature={creature} onEditClick={handleClickEdit} />
-			<button
-				class="creature-kill"
-				style:background-color={creature.team.color}
-				onclick={async () => await toggleSessionCreatureDeath({sessionId: data.sessionId, creatureId: creature.id})}
-			>
-				<span><FrownIcon /></span>
-			</button>
-			<button
-				class="creature-delete"
-				style:background-color={creature.team.color}
-				onclick={async () => await deleteSessionCreature({sessionId: data.sessionId, creatureId: creature.id})}
-			>
-				<span><XIcon /></span>
-			</button>
-		</div>
+	<div
+		class="creature-wrapper {creature.isDead ? 'creature-dead' : ''}"
+		style:background-color={creature.team.color}
+		animate:flip={{ duration: 200 }}
+	>
+		<Creature creature={creature} sessionId={data.sessionId} onEditClick={handleClickEdit} />
+	</div>
 	{/each}
 </div>
 {#if nextRoundState.length > 0}
@@ -264,24 +245,7 @@
 			style:background-color={creature.team.color}
 			animate:flip={{ duration: 200 }}
 		>
-			<div class="creature-drag-handle" style:background-color={creature.team.color} use:dragHandle>
-				<span><MenuIcon /></span>
-			</div>
-			<Creature creature={creature} onEditClick={handleClickEdit} />
-			<button
-				class="creature-kill"
-				style:background-color={creature.team.color}
-				onclick={async () => await toggleSessionCreatureDeath({sessionId: data.sessionId, creatureId: creature.id})}
-			>
-				<span><FrownIcon /></span>
-			</button>
-			<button
-				class="creature-delete"
-				style:background-color={creature.team.color}
-				onclick={async () => await deleteSessionCreature({sessionId: data.sessionId, creatureId: creature.id})}
-			>
-				<span><XIcon /></span>
-			</button>
+			<Creature creature={creature} sessionId={data.sessionId} onEditClick={handleClickEdit} />
 		</div>
 	{/each}
 </div>
@@ -418,40 +382,9 @@
 		display: grid;
 		grid-template-rows: auto;
 		grid-template-columns: 2rem 1fr 3rem 3rem;
-
-		& .creature-drag-handle {
-			font-size: 2rem;
-			width: 3rem;
-			padding: 0rem 0rem 0.3rem 0.2rem;
-			display: flex;
-			align-items: center;
-			color: #8f8f8f;
-			transition: 0.2s;
-		}
 	}
 	.creature-wrapper.creature-dead {
 		filter: opacity(0.5) grayscale(0.5);
-	}
-	.creature-delete,
-	.creature-kill {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		padding: 0rem 0rem 0rem 0rem;
-		border: none;
-		color: #f0ede2;
-		transition: 0.2s;
-		width: 3rem;
-
-		&:hover {
-			background-color: #802020 !important;
-			cursor: pointer;
-		}
-
-		&:active {
-			background-color: #903030 !important;
-			cursor: pointer;
-		}
 	}
 	.new-round-divider {
 		display: flex;

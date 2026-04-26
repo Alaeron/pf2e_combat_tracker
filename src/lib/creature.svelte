@@ -1,5 +1,11 @@
 <script lang="ts">
-	import Condition from '$lib/condition.svelte';
+    import { XIcon, FrownIcon, MenuIcon } from 'svelte-feather-icons';
+	import { dragHandle } from 'svelte-dnd-action';
+	import {
+		deleteSessionCreature,
+		toggleSessionCreatureDeath,
+	} from '$lib/remote/session.remote';
+   	import Condition from '$lib/condition.svelte';
 	import type { ISessionCondition } from '$lib/condition.svelte';
 
     export interface ICreature {
@@ -16,11 +22,12 @@
         }
     }
     interface ICreatureProps {
-        creature: ICreature
+        creature: ICreature,
+        sessionId: number,
         onEditClick: CallableFunction
     }
 
-    let { creature, onEditClick }: ICreatureProps = $props();
+    let { creature, sessionId, onEditClick }: ICreatureProps = $props();
     let classDead = $derived(creature.isDead ? "creature-dead": "");
 
     function handleEditClick() {
@@ -28,6 +35,9 @@
     }
 </script>
 
+<div class="creature-drag-handle" use:dragHandle style:background-color={creature.team.color}>
+    <span><MenuIcon /></span>
+</div>
 <div class="creature {classDead}" style:background-color={creature.team.color}>
     <span class="order">{creature.order}</span>
     <span class="name">{creature.name}</span>
@@ -38,6 +48,20 @@
         <div class="edit-overlay"><span>click to edit</span></div>
     </div>
 </div>
+<button
+    class="creature-kill"
+    style:background-color={creature.team.color}
+    onclick={async () => await toggleSessionCreatureDeath({sessionId: sessionId, creatureId: creature.id})}
+>
+    <span><FrownIcon /></span>
+</button>
+<button
+    class="creature-delete"
+    style:background-color={creature.team.color}
+    onclick={async () => await deleteSessionCreature({sessionId: sessionId, creatureId: creature.id})}
+>
+    <span><XIcon /></span>
+</button>
 
 <style>
     .creature {
@@ -87,4 +111,34 @@
         align-items: center;
         cursor: pointer;
     }
+    .creature-drag-handle {
+        font-size: 2rem;
+        width: 3rem;
+        padding: 0rem 0rem 0.3rem 0.2rem;
+        display: flex;
+        align-items: center;
+        color: #8f8f8f;
+        transition: 0.2s;
+    }
+	.creature-delete,
+	.creature-kill {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0rem 0rem 0rem 0rem;
+		border: none;
+		color: #f0ede2;
+		transition: 0.2s;
+		width: 3rem;
+
+		&:hover {
+			background-color: #802020 !important;
+			cursor: pointer;
+		}
+
+		&:active {
+			background-color: #903030 !important;
+			cursor: pointer;
+		}
+	}
 </style>
