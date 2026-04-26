@@ -57,7 +57,7 @@
 	if (browser) {
 		document.body.addEventListener("fullscreenchange", () => {
 			isFullscreen = document.fullscreenElement !== null
-			document.querySelectorAll(".initiative-list, .toolbar")?.forEach((e) => {
+			document.querySelectorAll(".initiative-list, .toolbar, .new-round-divider")?.forEach((e) => {
 				(e as HTMLElement).style.zoom = isFullscreen ? "150%" : "100%";
 			})
 		})
