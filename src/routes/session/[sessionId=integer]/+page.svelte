@@ -240,13 +240,13 @@
 	onfinalize={handleDndNextFinalize}
 >
 	{#each nextRoundState as creature (creature.id)}
-		<div
-			class="creature-wrapper {creature.isDead ? 'creature-dead' : ''}"
-			style:background-color={creature.team.color}
-			animate:flip={{ duration: 200 }}
-		>
-			<Creature creature={creature} sessionId={data.sessionId} onEditClick={handleClickEdit} />
-		</div>
+	<div
+		class="creature-wrapper {creature.isDead ? 'creature-dead' : ''}"
+		style:background-color={creature.team.color}
+		animate:flip={{ duration: 200 }}
+	>
+		<Creature creature={creature} sessionId={data.sessionId} onEditClick={handleClickEdit} />
+	</div>
 	{/each}
 </div>
 
