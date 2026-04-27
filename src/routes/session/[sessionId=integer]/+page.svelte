@@ -20,6 +20,7 @@
 		previousSessionTurn,
 		reorderSession,
 		resetSession,
+		updateSession,
 	} from '$lib/remote/session.remote';
 	import Creature from '$lib/creature.svelte';
 	import AddForm from '$lib/add_form.svelte';
@@ -97,7 +98,7 @@
 	}
 	function handleKeyboardShortcuts(e: KeyboardEvent) {
 		// Don't activate when editing forms are open
-		if (showAddForm || showEditForm) {
+		if (showAddForm || showEditForm || document.activeElement === document.querySelector("#session-name")) {
 			return;
 		}
 		switch (e.key) {
@@ -166,7 +167,12 @@
 
 <header>
 	<h1><a href="/">Combat Tracker</a></h1>
-	<h2>{ sessionState.name }</h2>
+	<input id="session-name" value={sessionState.name} onchange={async (e) => {
+		await updateSession({
+			sessionId: data.sessionId,
+			name: (e.target as HTMLInputElement)?.value
+		})
+	}}/>
 	<div class="header-right">
 		<button title="Add" onclick={() => (showAddForm = true)}><PlusIcon /></button>
 		<input
@@ -265,9 +271,17 @@
 		align-items: center;
 		padding: 0rem 0.5rem;
 
-		& h1,
-		& h2 {
+		& h1 {
 			margin: 0rem;
+		}
+
+		#session-name {
+			background-color: #202020;
+			border: none;
+			color: #f0ede2;
+			font-size: 1.5rem;
+			font-weight: bold;
+			text-align: center;
 		}
 
 		& a,

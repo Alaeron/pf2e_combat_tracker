@@ -48,7 +48,7 @@
             <div>
                 <span>Conditions</span>
                 <div class="all-conditions-list">
-                    {#each unselectedConditions as condition (condition.name)}
+                    {#each unselectedConditions as condition (condition.id)}
                     <div class="condition-wrapper" onclick={async () => {
                         if (creature) {
                             return await addSessionCreatureCondition({

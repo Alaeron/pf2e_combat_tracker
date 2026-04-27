@@ -29,6 +29,26 @@ const addSession = form(
         return newSession
 });
 
+const updateSession = command(
+    z.object({
+        sessionId: z.int().min(1),
+        name: z.string().min(1)
+    }),
+    async ({sessionId, name}) => {
+        const updatedSession = await db
+            .update(session)
+            .set({name: name})
+            .where(eq(session.id, sessionId))
+            .returning()
+            .get()
+
+        void getSession().refresh()
+        void getAllSessions().refresh()
+        void getSessionState().refresh()
+
+        return updatedSession
+});
+
 const getSession = query(z.int(), async (id: number) => {
     const foundSession = await db
         .select()
@@ -578,6 +598,7 @@ const reorderSession = command(
 
 export {
     addSession,
+    updateSession,
     getSession,
     getAllSessions,
     getSessionState,
