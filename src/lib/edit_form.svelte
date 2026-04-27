@@ -53,7 +53,7 @@
                 <span>Conditions</span>
                 <div class="all-conditions-list">
                     {#each unselectedConditions as condition (condition.id)}
-                    {#if filterString === "" || condition.name.toLowerCase().includes(filterString)}
+                    {#if filterString === "" || condition.name.toLowerCase().includes(filterString.toLowerCase())}
                     <div class="condition-wrapper" onclick={async () => {
                         if (creature) {
                             return await addSessionCreatureCondition({
@@ -94,7 +94,7 @@
                 <div class="current-conditions-list">
                     {#if creature }
                     {#each selectedConditions as condition (condition.id)}
-                    {#if filterString === "" || condition.name.toLowerCase().includes(filterString)}
+                    {#if filterString === "" || condition.name.toLowerCase().includes(filterString.toLowerCase())}
                     <div class="condition-row">
                         <div class="condition-wrapper" onclick={async () => {
                         if (creature) {
