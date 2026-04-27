@@ -1,0 +1,1 @@
+ALTER TABLE `session_condition` ADD `auto_reduce` integer DEFAULT NULL;

@@ -89,6 +89,7 @@ const getSessionState = query(z.int(), async (id: number) => {
             conditionCategoryId: conditionCategory.id,
             conditionCategoryName: conditionCategory.name,
             conditionCategoryColor: conditionCategory.color,
+            conditionAutoReduce: sessionCondition.autoReduce,
             conditionValue: sessionCondition.value,
         })
         .from(session)
@@ -132,7 +133,8 @@ const getSessionState = query(z.int(), async (id: number) => {
                 categoryId: row.conditionCategoryId,
                 categoryName: row.conditionCategoryName,
                 categoryColor: row.conditionCategoryColor,
-                value: row.conditionValue
+                autoReduce: row.conditionAutoReduce,
+                value: row.conditionValue,
             })
         }
         return acc
@@ -161,7 +163,8 @@ const getSessionState = query(z.int(), async (id: number) => {
                 categoryId: number,
                 categoryName: string,
                 categoryColor: string,
-                value: number | null
+                autoReduce: boolean | null,
+                value: number | null,
             }[]
         }[]
     } = foundSessionState.reduce((acc, row) => {
@@ -251,7 +254,8 @@ const loadSession = command(
                 sessionId: parsedData.sessionState.id,
                 creatureId: c.id,
                 conditionId: co.id,
-                value: co.value
+                autoReduce: co.autoReduce,
+                value: co.value,
             }
         })
     })
@@ -282,6 +286,7 @@ const loadSession = command(
                     sessionId: sessionId,
                     creatureId: newCreatureId,
                     conditionId: co.conditionId,
+                    autoReduce: co.autoReduce,
                     value: co.value
                 }
             }))
@@ -423,13 +428,15 @@ const updateSessionCondition = command(
         sessionId: z.int().min(1),
         creatureId: z.int().min(1),
         conditionId: z.int().min(1),
-        value: z.int()
+        value: z.int(),
+        autoReduce: z.boolean().nullable(),
     }),
-    async ({sessionId, creatureId, conditionId, value}) => {
+    async ({sessionId, creatureId, conditionId, value, autoReduce}) => {
         const condition = db
             .update(sessionCondition)
             .set({
-                value: value
+                value: value,
+                autoReduce: autoReduce
             })
             .where(and(
                 eq(sessionCondition.sessionId, sessionId),
@@ -482,7 +489,8 @@ const addSessionCreatureCondition = command(
                 sessionId: sessionId,
                 creatureId: creatureId,
                 conditionId: conditionId,
-                value: conditionDefinition.valueRequired ? 1 : null
+                autoReduce: conditionDefinition.valueRequired ? true : null,
+                value: conditionDefinition.valueRequired ? 1 : null,
             })
             .returning()
 
@@ -536,50 +544,74 @@ const resetSession = command(
 const nextSessionTurn = command(
     z.int().min(1),
     async (sessionId) => {
-        const foundSession = await db
-            .update(sessionCreature)
-            .set({ round: sql`${sessionCreature.round} + 1` })
-            .where(sql`
-                ${sessionCreature.sessionId}=${sessionId}
-                AND ${sessionCreature.id} IN (
-                    SELECT ${sessionCreature.id}
-                    FROM ${sessionCreature}
-                    WHERE ${sessionCreature.sessionId}=${sessionId}
-                    ORDER BY ${sessionCreature.round}, ${sessionCreature.order}
-                    LIMIT 1
-                )`
-            )
-            .returning()
-            .get()
+
+        await db.transaction(async (tx) => {
+
+            // Increase round of lowest order session creature
+            const foundSessionCreature = await tx
+                .update(sessionCreature)
+                .set({ round: sql`${sessionCreature.round} + 1` })
+                .where(sql`
+                    ${sessionCreature.sessionId}=${sessionId}
+                    AND ${sessionCreature.id} IN (
+                        SELECT ${sessionCreature.id}
+                        FROM ${sessionCreature}
+                        WHERE ${sessionCreature.sessionId}=${sessionId}
+                        ORDER BY ${sessionCreature.round}, ${sessionCreature.order}
+                        LIMIT 1
+                    )`
+                )
+                .returning()
+                .get()
+
+            // Reduce session conditions where autoReduce === true
+            await tx.update(sessionCondition)
+                .set({ value: sql`${sessionCondition.value} - 1` })
+                .where(and(
+                    eq(sessionCondition.sessionId, sessionId),
+                    eq(sessionCondition.creatureId, foundSessionCreature.id),
+                    eq(sessionCondition.autoReduce, true)
+                ))
+
+        })
 
         void getSessionState(sessionId).refresh()
-
-        return foundSession
     }
 )
 
 const previousSessionTurn = command(
     z.int().min(1),
     async (sessionId) => {
-        const foundSession = await db
-            .update(sessionCreature)
-            .set({ round: sql`${sessionCreature.round} - 1` })
-            .where(sql`
-                ${sessionCreature.sessionId}=${sessionId}
-                AND ${sessionCreature.id} IN (
-                    SELECT ${sessionCreature.id}
-                    FROM ${sessionCreature}
-                    WHERE ${sessionCreature.sessionId}=${sessionId}
-                    ORDER BY ${sessionCreature.round} DESC, ${sessionCreature.order} DESC
-                    LIMIT 1
-                )`
-            )
-            .returning()
-            .get()
+        await db.transaction(async (tx) => {
 
-        void getSessionState(sessionId).refresh()
+            // Decrease round of highest order session creature
+            const foundSessionCreature = await tx
+                .update(sessionCreature)
+                .set({ round: sql`${sessionCreature.round} - 1` })
+                .where(sql`
+                    ${sessionCreature.sessionId}=${sessionId}
+                    AND ${sessionCreature.id} IN (
+                        SELECT ${sessionCreature.id}
+                        FROM ${sessionCreature}
+                        WHERE ${sessionCreature.sessionId}=${sessionId}
+                        ORDER BY ${sessionCreature.round} DESC, ${sessionCreature.order} DESC
+                        LIMIT 1
+                    )`
+                )
+                .returning()
+                .get()
 
-        return foundSession
+            // Increase session conditions where autoReduce === true
+            await tx.update(sessionCondition)
+                .set({ value: sql`${sessionCondition.value} + 1` })
+                .where(and(
+                    eq(sessionCondition.sessionId, sessionId),
+                    eq(sessionCondition.creatureId, foundSessionCreature.id),
+                    eq(sessionCondition.autoReduce, true)
+                ))
+
+            void getSessionState(sessionId).refresh()
+        })
     }
 )
 

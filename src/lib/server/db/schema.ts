@@ -90,6 +90,8 @@ const sessionCondition = sqliteTable("session_condition", {
         .notNull(),
     value: integer("value")
         .default(sql`NULL`),
+    autoReduce: integer("auto_reduce", { mode: 'boolean' })
+        .default(sql`NULL`),
     ...timestamp,
 }, (table) => [
     primaryKey({ columns: [ table.sessionId, table.creatureId, table.conditionId ] }),

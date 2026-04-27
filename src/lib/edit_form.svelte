@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { TrendingDownIcon, StopCircleIcon } from 'svelte-feather-icons';
 	import Condition, { type ICondition, type ISessionCondition } from '$lib/condition.svelte';
 	import { getAllConditions } from '$lib/remote/condition.remote';
     import type { ICreature } from '$lib/creature.svelte';
@@ -71,7 +72,7 @@
                             })}
                         }
                     } role="button" tabindex="0">
-                        <Condition condition={ {value: null, ...condition} } />
+                        <Condition condition={ {value: null, autoReduce: null, ...condition} } />
                     </div>
                     {/if}
                     {/each}
@@ -118,7 +119,7 @@
                         {#if condition.value !== null }
                         <div class="condition-level-controls">
                             {#if condition.value}
-                            <button onclick={async() => {
+                            <button title="Decrease condition" onclick={async() => {
                                 return await decrementSessionCondition({
                                     sessionId: sessionId,
                                     creatureId: creature.id,
@@ -141,16 +142,38 @@
                                         sessionId: sessionId,
                                         creatureId: creature.id,
                                         conditionId: condition.id,
+                                        autoReduce: condition.autoReduce,
                                         value: parseInt((e.target as HTMLInputElement).value)
                                     })
                             }}/>
-                            <button onclick={async() => {
+                            <button title="Increase condition" onclick={async() => {
                                 return await incrementSessionCondition({
                                     sessionId: sessionId,
                                     creatureId: creature.id,
                                     conditionId: condition.id
                                 })
                             }}>+</button>
+                            {#if condition.autoReduce === true }
+                            <button class="auto-reduce" title="Disable auto reduce" onclick={async () => {
+                                updateSessionCondition({
+                                        sessionId: sessionId,
+                                        creatureId: creature.id,
+                                        conditionId: condition.id,
+                                        autoReduce: false,
+                                        value: condition.value ?? 1,
+                                    })
+                            }}><TrendingDownIcon size="16"/></button>
+                            {:else if  condition.autoReduce === false }
+                            <button class="auto-reduce auto-reduce-disabled" title="Enable auto reduce" onclick={async () => {
+                                updateSessionCondition({
+                                        sessionId: sessionId,
+                                        creatureId: creature.id,
+                                        conditionId: condition.id,
+                                        autoReduce: true,
+                                        value: condition.value ?? 1,
+                                    })
+                            }}><TrendingDownIcon size="16"/></button>
+                            {/if}
                             {/if}
                         </div>
                         {/if}
@@ -227,6 +250,22 @@
         width: 1.5rem;
         height: 1.6rem;
         text-align: center;
+    }
+    .condition-level-controls button.auto-reduce {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0rem;
+        width: 1.5rem;
+        border-radius: 1.5rem;
+
+        &.auto-reduce-disabled {
+            background-color: unset;
+        }
+
+        &.auto-reduce-disabled:hover {
+            background-color: #505050;
+        }
     }
     button {
         border-radius: 0;

@@ -11,6 +11,7 @@
     export interface ISessionCondition {
         id: number,
         name: string,
+        autoReduce: boolean | null,
         value: number | null,
         categoryId: number,
         categoryName: string,
@@ -45,5 +46,6 @@
     }
     .condition-grow {
         flex-grow: 1;
+        max-width: unset;
     }
 </style>
