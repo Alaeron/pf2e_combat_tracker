@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TrendingDownIcon, StopCircleIcon } from 'svelte-feather-icons';
+    import { TrendingDownIcon, PlusIcon, MinusIcon } from 'svelte-feather-icons';
 	import Condition, { type ICondition, type ISessionCondition } from '$lib/condition.svelte';
 	import { getAllConditions } from '$lib/remote/condition.remote';
     import type { ICreature } from '$lib/creature.svelte';
@@ -132,7 +132,7 @@
                                 pattern="[0-9]"
                                 onkeydown={(e) => {
                                     if (!/[0-9]/.test(e?.key)
-                                        && ! ["Enter", "Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e?.key)
+                                        && ! ["Enter", "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e?.key)
                                     ) {
                                         e.preventDefault()
                                     }
