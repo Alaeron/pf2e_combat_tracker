@@ -40,6 +40,7 @@ const getAllConditions = query(async () => {
         })
         .from(condition)
         .innerJoin(conditionCategory, eq(condition.categoryId, conditionCategory.id))
+        .orderBy(condition.name)
         .all()
 
     if (foundConditions.length === 0) {
