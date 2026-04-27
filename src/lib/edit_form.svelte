@@ -115,6 +115,7 @@
                     } role="button" tabindex="0">
                             <Condition condition={condition} hideValue={true} />
                         </div>
+                        {#if condition.value !== null }
                         <div class="condition-level-controls">
                             {#if condition.value}
                             <button onclick={async() => {
@@ -152,6 +153,7 @@
                             }}>+</button>
                             {/if}
                         </div>
+                        {/if}
                     </div>
                     {/if}
                     {/each}
@@ -171,9 +173,9 @@
         border: none;
         color: #f0ede2;
         max-width: 100vw;
+        background-color: #303030;
     }
     form {
-        background-color: #303030;
         padding: 1rem;
         display: flex;
         flex-flow: column;
@@ -213,13 +215,12 @@
     .condition-row {
         display: flex;
         flex-flow: row;
-        justify-content: space-between;
+        gap: .1rem;
     }
     .condition-level-controls {
         display: flex;
         align-self: flex-end;
         gap: .1rem;
-        margin-left: .1rem;
     }
     .condition-row button,
     .condition-row input {
@@ -272,4 +273,12 @@
     .condition-wrapper:hover {
         cursor: pointer;
     }
+
+	@media screen and (min-width: 100px) and (max-width: 699px) {
+        dialog {
+            width: 100vw;
+            max-width: 100vw;
+            margin: 10vh 0rem;
+        }
+	}
 </style>
