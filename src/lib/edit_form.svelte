@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TrendingDownIcon, PlusIcon, MinusIcon } from 'svelte-feather-icons';
+    import { TrendingDownIcon } from 'svelte-feather-icons';
 	import Condition, { type ICondition, type ISessionCondition } from '$lib/condition.svelte';
 	import { getAllConditions } from '$lib/remote/condition.remote';
     import type { ICreature } from '$lib/creature.svelte';
