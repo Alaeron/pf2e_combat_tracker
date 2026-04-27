@@ -66,7 +66,7 @@ export const init: ServerInit = async () => {
                 {id: 13, name: "Fascinated",          valueRequired: false, categoryId: 3},
                 {id: 14, name: "Fatigued",            valueRequired: false, categoryId: 2},
                 {id: 15, name: "Fleeing",             valueRequired: false, categoryId: 5},
-                {id: 16, name: "Frightened",          valueRequired: false, categoryId: 3},
+                {id: 16, name: "Frightened",          valueRequired: true,  categoryId: 3},
                 {id: 17, name: "Grabbed",             valueRequired: false, categoryId: 5},
                 {id: 18, name: "Hidden",              valueRequired: false, categoryId: 6},
                 {id: 19, name: "Immobilized",         valueRequired: false, categoryId: 1},
