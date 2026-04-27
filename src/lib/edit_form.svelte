@@ -3,7 +3,6 @@
 	import { getAllConditions } from '$lib/remote/condition.remote';
     import type { ICreature } from '$lib/creature.svelte';
 	import { addSessionCreatureCondition, decrementSessionCondition, deleteAllSessionCreatureConditions, deleteSessionCreatureCondition, incrementSessionCondition, updateSessionCondition } from './remote/session.remote';
-	import { preventDefault } from 'svelte/legacy';
 
     interface IEditFormProps {
         showEditForm: boolean,
@@ -29,9 +28,12 @@
             return selectedConditions.find((element) => condition.id === element.id) === undefined;
         });
     });
+    let filterString = $state<string>("");
 
     $effect(() => {
         if (showEditForm && dialog) {
+            filterString = "";
+            (document.querySelector("#conditions-filter") as HTMLInputElement).focus();
             dialog.showModal();
         } else {
             dialog?.close()
@@ -45,11 +47,13 @@
     onclick={(e) => { if (e.target === dialog) dialog.close(); }}
 >
     <form>
+        <input id="conditions-filter" placeholder="Filter conditions..." bind:value={filterString}/>
         <div class="conditions-list-wrapper">
             <div>
                 <span>Conditions</span>
                 <div class="all-conditions-list">
                     {#each unselectedConditions as condition (condition.id)}
+                    {#if filterString === "" || condition.name.toLowerCase().includes(filterString)}
                     <div class="condition-wrapper" onclick={async () => {
                         if (creature) {
                             return await addSessionCreatureCondition({
@@ -69,6 +73,7 @@
                     } role="button" tabindex="0">
                         <Condition condition={ {value: null, ...condition} } />
                     </div>
+                    {/if}
                     {/each}
                 </div>
             </div>
@@ -89,6 +94,7 @@
                 <div class="current-conditions-list">
                     {#if creature }
                     {#each selectedConditions as condition (condition.id)}
+                    {#if filterString === "" || condition.name.toLowerCase().includes(filterString)}
                     <div class="condition-row">
                         <div class="condition-wrapper" onclick={async () => {
                         if (creature) {
@@ -147,6 +153,7 @@
                             {/if}
                         </div>
                     </div>
+                    {/if}
                     {/each}
                     {/if}
                 </div>
@@ -235,14 +242,14 @@
             background-color: #808080;
         }
     }
-    .condition-row input {
-        border-radius: 0;
-        border: none;
-        padding: 0rem .2rem;
+    input {
         background-color: #606060;
         color: #f0ede2;
+        border-radius: 0;
+        border: 1px solid #606060;
+        font-size: 1rem;
         box-sizing: border-box;
-        width: 2rem;
+        padding: .2rem .4rem;
 
         &:focus,
         &:focus-visible,
@@ -250,6 +257,10 @@
             border: 1px solid #f0ede2;
             outline: 0;
         }
+    }
+    .condition-row input {
+        padding: 0rem .2rem;
+        width: 2rem;
     }
     .condition-row input[type="number"],
     .condition-row input[type="number"]::-webkit-inner-spin-button,
