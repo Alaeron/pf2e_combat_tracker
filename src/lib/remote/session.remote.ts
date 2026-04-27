@@ -418,6 +418,33 @@ const decrementSessionCondition = command(
     }
 )
 
+const updateSessionCondition = command(
+    z.object({
+        sessionId: z.int().min(1),
+        creatureId: z.int().min(1),
+        conditionId: z.int().min(1),
+        value: z.int()
+    }),
+    async ({sessionId, creatureId, conditionId, value}) => {
+        const condition = db
+            .update(sessionCondition)
+            .set({
+                value: value
+            })
+            .where(and(
+                eq(sessionCondition.sessionId, sessionId),
+                eq(sessionCondition.creatureId, creatureId),
+                eq(sessionCondition.conditionId, conditionId)
+            ))
+            .returning()
+            .get()
+
+        void getSessionState(sessionId).refresh()
+        return condition
+
+    }
+)
+
 const deleteAllSessionCreatureConditions = command(
     z.object({
         sessionId: z.int().min(1),
@@ -609,6 +636,7 @@ export {
     deleteSessionCreature,
     incrementSessionCondition,
     decrementSessionCondition,
+    updateSessionCondition,
     deleteSessionCreatureCondition,
     deleteAllSessionCreatureConditions,
     addSessionCreatureCondition,

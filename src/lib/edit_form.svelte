@@ -2,7 +2,8 @@
 	import Condition, { type ICondition, type ISessionCondition } from '$lib/condition.svelte';
 	import { getAllConditions } from '$lib/remote/condition.remote';
     import type { ICreature } from '$lib/creature.svelte';
-	import { addSessionCreatureCondition, decrementSessionCondition, deleteAllSessionCreatureConditions, deleteSessionCreatureCondition, incrementSessionCondition } from './remote/session.remote';
+	import { addSessionCreatureCondition, decrementSessionCondition, deleteAllSessionCreatureConditions, deleteSessionCreatureCondition, incrementSessionCondition, updateSessionCondition } from './remote/session.remote';
+	import { preventDefault } from 'svelte/legacy';
 
     interface IEditFormProps {
         showEditForm: boolean,
@@ -87,7 +88,7 @@
                 </span>
                 <div class="current-conditions-list">
                     {#if creature }
-                    {#each selectedConditions as condition (condition.name)}
+                    {#each selectedConditions as condition (condition.id)}
                     <div class="condition-row">
                         <div class="condition-wrapper" onclick={async () => {
                         if (creature) {
@@ -106,7 +107,7 @@
                             })}
                         }
                     } role="button" tabindex="0">
-                            <Condition condition={condition} />
+                            <Condition condition={condition} hideValue={true} />
                         </div>
                         <div class="condition-level-controls">
                             {#if condition.value}
@@ -117,6 +118,25 @@
                                     conditionId: condition.id
                                 })
                             }}>-</button>
+                            <input
+                                type="number"
+                                value={condition.value}
+                                pattern="[0-9]"
+                                onkeydown={(e) => {
+                                    if (!/[0-9]/.test(e?.key)
+                                        && ! ["Enter", "Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e?.key)
+                                    ) {
+                                        e.preventDefault()
+                                    }
+                                }}
+                                onchange={(e) => {
+                                    updateSessionCondition({
+                                        sessionId: sessionId,
+                                        creatureId: creature.id,
+                                        conditionId: condition.id,
+                                        value: parseInt((e.target as HTMLInputElement).value)
+                                    })
+                            }}/>
                             <button onclick={async() => {
                                 return await incrementSessionCondition({
                                     sessionId: sessionId,
@@ -167,8 +187,9 @@
         max-height: 70vh;
         gap: .4rem;
         min-width: 10rem;
-        overflow-y: scroll;
-        padding: 0rem .4rem 0rem .2rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0rem .2rem 0rem .2rem;
         margin-top: .4rem;
     }
     .current-conditions-header {
@@ -190,12 +211,14 @@
     .condition-level-controls {
         display: flex;
         align-self: flex-end;
+        gap: .1rem;
+        margin-left: .1rem;
     }
-    .condition-row button {
+    .condition-row button,
+    .condition-row input {
         width: 1.5rem;
         height: 1.6rem;
         text-align: center;
-        margin-left: .1rem;
     }
     button {
         border-radius: 0;
@@ -211,6 +234,29 @@
         &:active {
             background-color: #808080;
         }
+    }
+    .condition-row input {
+        border-radius: 0;
+        border: none;
+        padding: 0rem .2rem;
+        background-color: #606060;
+        color: #f0ede2;
+        box-sizing: border-box;
+        width: 2rem;
+
+        &:focus,
+        &:focus-visible,
+        &:active {
+            border: 1px solid #f0ede2;
+            outline: 0;
+        }
+    }
+    .condition-row input[type="number"],
+    .condition-row input[type="number"]::-webkit-inner-spin-button,
+    .condition-row input[type="number"]::-webkit-outer-spin-button {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: textfield;
     }
     .condition-wrapper:hover {
         cursor: pointer;

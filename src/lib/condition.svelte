@@ -19,8 +19,9 @@
     interface IConditionProps {
         condition: ISessionCondition
         autoGrow?: boolean
+        hideValue?: boolean
     }
-    let { condition, autoGrow = true }: IConditionProps = $props();
+    let { condition, autoGrow = true, hideValue = false }: IConditionProps = $props();
     let autoGrowClass = $derived(autoGrow ? "condition-grow": "")
 </script>
 
@@ -28,7 +29,7 @@
     class="condition {autoGrowClass}"
     style:background-color={condition.categoryColor}
 >
-    {condition.name} {condition.value}
+    {condition.name} {#if !hideValue}{condition.value}{/if}
 </span>
 
 <style>
