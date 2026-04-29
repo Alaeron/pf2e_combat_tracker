@@ -1,42 +1,46 @@
-# sv
+# Pf2e Combat Tracker
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A web application for tracking initiative order and conditions during combat for tabletop rpgs.
 
-## Creating a project
+## Technology Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@0.13.2 create --template minimal --types ts --add prettier eslint --install npm app
-```
+- [SvelteKit](https://svelte.dev/docs/kit/introduction): A javascript/typescript framework for applications using Svelte.
+- [Svelte](https://svelte.dev/docs/svelte/overview): A javascript/typescript framework for building reactive component based web interfaces.
+- [Drizzle](https://orm.drizzle.team/docs/overview): A typescript ORM for managing database interaction.
+- [SQLite](https://sqlite.org/docs.html): An embedded relational SQL database.
+- [Docker](https://docs.docker.com/): Containerization for running and deploying the project.
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+This project uses a [VSCode Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) to prepackage project dependencies and tooling.
 
-```sh
-npm run dev
+### Dependencies
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+1. [VSCode](https://code.visualstudio.com/)
+2. [Docker](https://www.docker.com/)
+3. [VSCode Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
-## Building
+### Instructions
 
-To create a production version of your app:
+1. Git checkout the project
+    ```bash
+    # SSH
+    git clone ssh://git@gitea.internal.alaeron.com/Alaeron/pf2e_combat_tracker.git
+    # Or HTTPS
+    git clone https://gitea.internal.alaeron.com/Alaeron/pf2e_combat_tracker.git
+    ```
+2. Open it in VSCode
+3. In the bottom left, click the "><" icon and "Reopen in container"
+4. VSCode will now build the container and install development dependencies
+5. Install dependencies (using a dev container terminal)
+    ```bash
+    npm install
+    ```
 
-```sh
-npm run build
-```
+### Running
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+1. Run
+    ```bash
+    docker compose up -d
+    ```
+2. Go to http://localhost:5173
