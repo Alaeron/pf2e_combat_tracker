@@ -11,7 +11,8 @@
     export interface ISessionCondition {
         id: number,
         name: string,
-        autoReduce: boolean | null,
+        autoReduceStart: boolean | null,
+        autoReduceEnd: boolean | null,
         value: number | null,
         categoryId: number,
         categoryName: string,

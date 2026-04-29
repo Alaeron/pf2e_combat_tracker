@@ -72,7 +72,7 @@
                             })}
                         }
                     } role="button" tabindex="0">
-                        <Condition condition={ {value: null, autoReduce: null, ...condition} } />
+                        <Condition condition={ {value: null, autoReduceStart: null, autoReduceEnd: null, ...condition} } />
                     </div>
                     {/if}
                     {/each}
@@ -142,7 +142,8 @@
                                         sessionId: sessionId,
                                         creatureId: creature.id,
                                         conditionId: condition.id,
-                                        autoReduce: condition.autoReduce,
+                                        autoReduceStart: condition.autoReduceStart,
+                                        autoReduceEnd: condition.autoReduceEnd,
                                         value: parseInt((e.target as HTMLInputElement).value)
                                     })
                             }}/>
@@ -153,27 +154,30 @@
                                     conditionId: condition.id
                                 })
                             }}>+</button>
-                            {#if condition.autoReduce === true }
-                            <button class="auto-reduce" title="Disable auto reduce" onclick={async () => {
+                            <button class="auto-reduce auto-reduce-start { condition.autoReduceStart ? "" : "auto-reduce-disabled" }" title="Toggle auto reduce (start)" onclick={async () => {
                                 updateSessionCondition({
                                         sessionId: sessionId,
                                         creatureId: creature.id,
                                         conditionId: condition.id,
-                                        autoReduce: false,
+                                        autoReduceStart: !condition.autoReduceStart,
+                                        autoReduceEnd: condition.autoReduceEnd,
                                         value: condition.value ?? 1,
                                     })
-                            }}><TrendingDownIcon size="16"/></button>
-                            {:else if  condition.autoReduce === false }
-                            <button class="auto-reduce auto-reduce-disabled" title="Enable auto reduce" onclick={async () => {
+                            }}>
+                                <TrendingDownIcon size="16"/>
+                            </button>
+                            <button class="auto-reduce auto-reduce-end { condition.autoReduceEnd ? "" : "auto-reduce-disabled" }" title="Toggle auto reduce (end)" onclick={async () => {
                                 updateSessionCondition({
                                         sessionId: sessionId,
                                         creatureId: creature.id,
                                         conditionId: condition.id,
-                                        autoReduce: true,
+                                        autoReduceStart: condition.autoReduceStart,
+                                        autoReduceEnd: !condition.autoReduceEnd,
                                         value: condition.value ?? 1,
                                     })
-                            }}><TrendingDownIcon size="16"/></button>
-                            {/if}
+                            }}>
+                                <TrendingDownIcon size="16"/>
+                            </button>
                             {/if}
                         </div>
                         {/if}
@@ -255,9 +259,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 0rem;
+        padding: 0.4rem 0.2rem 0rem 0rem;
         width: 1.5rem;
         border-radius: 1.5rem;
+        position: relative;
 
         &.auto-reduce-disabled {
             background-color: unset;
@@ -265,6 +270,19 @@
 
         &.auto-reduce-disabled:hover {
             background-color: #505050;
+        }
+
+        &.auto-reduce-start::after {
+            content: 's';
+        }
+        &.auto-reduce-end::after {
+            content: 'e';
+        }
+
+        &::after {
+            position: absolute;
+            top: -0.1rem;
+            right: 0.35rem;
         }
     }
     button {

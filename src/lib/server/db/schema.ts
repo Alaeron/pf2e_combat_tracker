@@ -90,7 +90,9 @@ const sessionCondition = sqliteTable("session_condition", {
         .notNull(),
     value: integer("value")
         .default(sql`NULL`),
-    autoReduce: integer("auto_reduce", { mode: 'boolean' })
+    autoReduceStart: integer("auto_reduce_start", { mode: 'boolean' })
+        .default(sql`NULL`),
+    autoReduceEnd: integer("auto_reduce_end", { mode: 'boolean' })
         .default(sql`NULL`),
     ...timestamp,
 }, (table) => [
