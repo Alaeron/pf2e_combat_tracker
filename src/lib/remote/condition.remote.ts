@@ -1,5 +1,5 @@
 import { query, form, command } from "$app/server"
-import { eq, sql } from "drizzle-orm"
+import { eq, notInArray, sql } from "drizzle-orm"
 import { db } from "$lib/server/db/client"
 import { condition, conditionCategory } from "$lib/server/db/schema"
 import z from 'zod'
@@ -40,7 +40,7 @@ const getAllConditions = query(async () => {
         })
         .from(condition)
         .innerJoin(conditionCategory, eq(condition.categoryId, conditionCategory.id))
-        .orderBy(condition.name)
+        .orderBy(sql`lower(${condition.name})`)
         .all()
 
     if (foundConditions.length === 0) {
@@ -67,20 +67,26 @@ const updateAllConditions = form(
                 valueRequired: valueRequired[id.indexOf(item)] !== undefined,
             }
         })
-        const conditions = await db.insert(condition)
-            .values(data)
-            .onConflictDoUpdate({
-                target: condition.id,
-                set: {
-                    name: sql.raw(`excluded.${condition.name.name}`),
-                    categoryId: sql.raw(`excluded.${condition.categoryId.name}`),
-                    valueRequired: sql.raw(`excluded.${condition.valueRequired.name}`),
-                }
-            })
-            .returning()
-            .all()
 
-        return conditions
+        await db.transaction(async (tx) => {
+            await tx.delete(condition)
+                .where(notInArray(condition.id, id))
+
+            const conditions = await tx.insert(condition)
+                .values(data)
+                .onConflictDoUpdate({
+                    target: condition.id,
+                    set: {
+                        name: sql.raw(`excluded.${condition.name.name}`),
+                        categoryId: sql.raw(`excluded.${condition.categoryId.name}`),
+                        valueRequired: sql.raw(`excluded.${condition.valueRequired.name}`),
+                    }
+                })
+                .returning()
+                .all()
+
+            return conditions
+        })
     }
 );
 

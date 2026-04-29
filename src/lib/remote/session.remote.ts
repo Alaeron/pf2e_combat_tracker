@@ -67,6 +67,7 @@ const getAllSessions = query(async () => {
     const foundSessions = await db
         .select()
         .from(session)
+        .orderBy(sql`lower(${session.name})`)
 
     return foundSessions
 });

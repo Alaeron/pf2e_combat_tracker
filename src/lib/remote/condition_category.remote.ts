@@ -1,5 +1,5 @@
 import { query, form, command } from "$app/server"
-import { eq, sql } from "drizzle-orm"
+import { eq, notInArray, sql } from "drizzle-orm"
 import { db } from "$lib/server/db/client"
 import { conditionCategory } from "$lib/server/db/schema"
 import z from 'zod'
@@ -33,6 +33,7 @@ const getAllConditionCategories = query(async () => {
             color: conditionCategory.color
         })
         .from(conditionCategory)
+        .orderBy(sql`lower(${conditionCategory.name})`)
         .all()
 
     if (foundCategories.length === 0) {
@@ -56,19 +57,25 @@ const updateAllConditionCategories = form(
                 color: color[id.indexOf(item)],
             }
         })
-        const conditionCategories = await db.insert(conditionCategory)
-            .values(data)
-            .onConflictDoUpdate({
-                target: conditionCategory.id,
-                set: {
-                    name: sql.raw(`excluded.${conditionCategory.name.name}`),
-                    color: sql.raw(`excluded.${conditionCategory.color.name}`),
-                }
-            })
-            .returning()
-            .all()
 
-        return conditionCategories
+        await db.transaction(async (tx) => {
+            await tx.delete(conditionCategory)
+                .where(notInArray(conditionCategory.id, id))
+
+            const conditionCategories = await tx.insert(conditionCategory)
+                .values(data)
+                .onConflictDoUpdate({
+                    target: conditionCategory.id,
+                    set: {
+                        name: sql.raw(`excluded.${conditionCategory.name.name}`),
+                        color: sql.raw(`excluded.${conditionCategory.color.name}`),
+                    }
+                })
+                .returning()
+                .all()
+
+            return conditionCategories
+        })
     }
 );
 

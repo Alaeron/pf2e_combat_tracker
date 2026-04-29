@@ -1,5 +1,5 @@
 import { query, form, command } from "$app/server"
-import { eq, sql } from "drizzle-orm"
+import { eq, notInArray, sql } from "drizzle-orm"
 import { db } from "$lib/server/db/client"
 import { team } from "$lib/server/db/schema"
 import z from 'zod'
@@ -24,6 +24,7 @@ const getAllTeams = query(async () => {
     const foundTeams = await db
         .select()
         .from(team)
+        .orderBy(sql`lower(${team.name})`)
         .all()
 
     if (foundTeams.length === 0) {
@@ -77,19 +78,25 @@ const updateAllTeams = form(
                 color: color[id.indexOf(item)],
             }
         })
-        const teams = await db.insert(team)
-            .values(data)
-            .onConflictDoUpdate({
-                target: team.id,
-                set: {
-                    name: sql.raw(`excluded.${team.name.name}`),
-                    color: sql.raw(`excluded.${team.color.name}`),
-                }
-            })
-            .returning()
-            .all()
 
-        return teams
+        await db.transaction(async (tx) => {
+            await tx.delete(team)
+                .where(notInArray(team.id, id))
+
+            const teams = await tx.insert(team)
+                .values(data)
+                .onConflictDoUpdate({
+                    target: team.id,
+                    set: {
+                        name: sql.raw(`excluded.${team.name.name}`),
+                        color: sql.raw(`excluded.${team.color.name}`),
+                    }
+                })
+                .returning()
+                .all()
+
+            return teams
+        })
     }
 );
 

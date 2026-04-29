@@ -3,19 +3,16 @@
 		getAllTeams,
 		updateAllTeams,
 		addTeam,
-		deleteTeam,
 	} from "$lib/remote/team.remote";
 	import {
 		getAllConditionCategories,
 		updateAllConditionCategories,
 		addConditionCategory,
-		deleteConditionCategory,
 	} from "$lib/remote/condition_category.remote";
 	import {
 		getAllConditions,
 		updateAllConditions,
 		addCondition,
-		deleteCondition,
 	} from "$lib/remote/condition.remote";
 
 
@@ -54,7 +51,7 @@
 						<button onclick={async (e) => {
 							e.preventDefault();
 							if (confirm(`Deleting team: ${team.name}\nAre you sure?`)) {
-								await deleteTeam({id: team.id})
+								teams = teams.filter((e: { id: number }) => e.id !== team.id)
 							}
 						}}>Delete</button>
 					</div>
@@ -103,7 +100,7 @@
 						<button onclick={async (e) => {
 							e.preventDefault();
 							if (confirm(`Deleting category: ${category.name}\nAre you sure?`)) {
-								await deleteConditionCategory({id: category.id})
+								conditionCategories = conditionCategories.filter((e: { id: number }) => e.id !== category.id)
 							}
 						}}>Delete</button>
 					</div>
@@ -157,7 +154,7 @@
 						<button onclick={async (e) => {
 							e.preventDefault();
 							if (confirm(`Deleting condition: ${condition.name}\nAre you sure?`)) {
-								await deleteCondition({id: condition.id})
+								conditions = conditions.filter((e: { id: number }) => e.id !== condition.id)
 							}
 						}}>Delete</button>
 					</div>
