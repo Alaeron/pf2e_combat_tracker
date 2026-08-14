@@ -20,7 +20,7 @@
 			"extensions": [
 				"MohammadBaqer.better-folding",
 				"ms-azuretools.vscode-docker",
-				"eamodio.gitlens",
+				"maattdd.gitless",
 				"svelte.svelte-vscode",
 				"redhat.vscode-yaml",
 				"dbaeumer.vscode-eslint",
