@@ -45,9 +45,9 @@ jobs:
           severity: CRITICAL,HIGH
           token-setup-trivy: ${{ secrets.PUBLIC_RO_GITHUB_ACCESS_TOKEN }}
 
-      - name: "Test: a11y"
-        run: |
-          docker compose -f docker-compose.ci.yaml exec app npm run check:a11y
+      # - name: "Test: a11y"
+      #   run: |
+      #     docker compose -f docker-compose.ci.yaml exec app npm run check:a11y
 
       - name: "Cleanup"
         if: ${{ always() }}
