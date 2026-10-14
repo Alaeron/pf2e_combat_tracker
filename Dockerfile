@@ -1,5 +1,5 @@
 # ========== BUILDER ==========
-FROM node:25-alpine@sha256:ad82ecad30371c43f4057aaa4800a8ed88f9446553a2d21323710c7b937177fc AS builder
+FROM node:26-alpine@sha256:6f08a523443ddedf52941874c203475b0ad503e859ad70cb26ab8be9a517dbd5 AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ RUN npm run build && \
     find build -name "*.map" -delete
 
 # ========== PROD ==========
-FROM node:25-alpine@sha256:ad82ecad30371c43f4057aaa4800a8ed88f9446553a2d21323710c7b937177fc AS prod
+FROM node:26-alpine@sha256:6f08a523443ddedf52941874c203475b0ad503e859ad70cb26ab8be9a517dbd5 AS prod
 
 WORKDIR /app
 COPY --from=builder --chown=node:node /app/build/ build/
@@ -32,7 +32,7 @@ USER node
 CMD ["node", "build"]
 
 # ========== LOCAL ==========
-FROM node:25-bookworm-slim@sha256:435f3537a088a01fd208bb629a4b69c28d85deb9a60af8a710cafc3befd6e3be AS local
+FROM node:26-bookworm-slim@sha256:298992629d69bbd5b2b03ad57094d8e4fcb3a8eeb7c4e25d29de656519568913 AS local
 
 WORKDIR /app
 RUN apt-get update && \
