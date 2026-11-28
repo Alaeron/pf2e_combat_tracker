@@ -41,7 +41,7 @@ jobs:
           tags: ${{ env.IMAGE_URI }}:${{ env.IMAGE_BASE_VERSION }}.${{ forge.run_number }},${{ env.IMAGE_URI }}:latest
 
       - name: Scan image
-        uses: https://github.com/aquasecurity/trivy-action@0.35.0
+        uses: https://github.com/aquasecurity/trivy-action@v0.36.0
         continue-on-error: true
         with:
           image-ref: ${{ env.IMAGE_URI }}:${{ env.IMAGE_BASE_VERSION }}.${{ forge.run_number }}
